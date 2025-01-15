@@ -10,6 +10,7 @@ python = "^3.13"
 django = "^5.1.4"
 psycopg2-binary = "^2.9.10"
 pillow = "^11.1.0"
+ipython = "^8.31.0"
 
 
 [tool.poetry.group.lint.dependencies]

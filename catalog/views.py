@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from .models import Product
+from .models import Product, Contact
 
 
 def home(request):
@@ -14,4 +14,8 @@ def home(request):
 
 
 def contacts(request):
-    return render(request, 'contacts.html')
+    # Извлекаем все контактные данные из базы данных
+    contacts = Contact.objects.all()
+
+    # Передаем контакты в контекст шаблона
+    return render(request, 'contacts.html', {'contacts': contacts})

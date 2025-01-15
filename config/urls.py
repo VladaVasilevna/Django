@@ -8,7 +8,4 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', home, name='home'),
     path('home/', include('catalog.urls', namespace='catalog')),
-]
-
-if settings.DEBUG:
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
