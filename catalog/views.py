@@ -4,13 +4,13 @@ from .models import Product, Contact
 
 def home(request):
     # Получаем последние 5 созданных продуктов
-    latest_products = Product.objects.order_by('-created_at')[:5]
+    product_list = Product.objects.all()
 
     # Выводим их в консоль для отладки
-    print(latest_products)
+    print(product_list)
 
     # Передаем последние продукты в контекст шаблона
-    return render(request, 'home.html', {'latest_products': latest_products})
+    return render(request, 'product_list.html', {'product_list': product_list})
 
 
 def contacts(request):
