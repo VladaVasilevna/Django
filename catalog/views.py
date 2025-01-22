@@ -1,39 +1,36 @@
-from django.shortcuts import render, get_object_or_404, redirect
+from django.shortcuts import render
 from .models import Product, Contact
 from .forms import ProductForm
-from django.core.paginator import Paginator
+
+from django.views import View
+from django.views.generic import ListView, DetailView, CreateView
+from django.urls import reverse_lazy
 
 
-def home(request):
-    # Получаем все продукты для постраничного вывода
-    product_list = Product.objects.all()
+class HomeView(ListView):
+    model = Product
+    paginate_by = 12
 
-    # Настройка пагинации
-    paginator = Paginator(product_list, 12)  # Показывать по 12 товаров на странице
-    page_number = request.GET.get('page')
-    products = paginator.get_page(page_number)
-
-    return render(request, 'product_list.html', {'product_list': products, 'is_home': True})
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['is_home'] = True
+        return context
 
 
-def contacts(request):
-    # Извлекаем все контактные данные из базы данных
-    contacts = Contact.objects.all()
-    return render(request, 'contacts.html', {'contacts': contacts})
+class ContactsView(View):
+    def get(self, request):
+        contacts = Contact.objects.all()
+        return render(request, 'catalog/contacts.html', {'contacts': contacts})
 
 
-def products_detail(request, pk):
-    product = get_object_or_404(Product, pk=pk)
-    return render(request, 'products_detail.html', {'product': product})
+class ProductDetailView(DetailView):
+    model = Product
 
 
-def add_product(request):
-    if request.method == 'POST':
-        form = ProductForm(request.POST, request.FILES)
-        if form.is_valid():
-            form.save()
-            return redirect('catalog:home')
-    else:
-        form = ProductForm()
+class AddProductView(CreateView):
+    model = Product
+    form_class = ProductForm
+    success_url = reverse_lazy('catalog:home')
 
-    return render(request, 'add_product.html', {'form': form})
+    def form_valid(self, form):
+        return super().form_valid(form)

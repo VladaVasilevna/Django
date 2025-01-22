@@ -1,22 +1,23 @@
-{% extends 'home.html' %}
+{% extends 'catalog/home.html' %}
 {% load my_tags %}
+
 {% block content %}
 <div class="container">
     <div class="text-end mb-3">
         <a href="{% url 'catalog:add_product' %}" class="btn btn-primary">Добавить товар</a>
     </div>
     <div class="row text-center">
-        {% for product in product_list %}
+        {% for product in object_list %}
         <div class="col-3">
             <div class="card mb-4 box-shadow">
                 <div class="card-header">
                     <h4 class="my-0 font-weight-normal">{{ product.name }}</h4>
                 </div>
                 <div class="card-body">
-                    <img src="{{ product.image | media_filter }}">
+                    <img src="{{ product.image | media_filter }}" alt="{{ product.name }}">
                     <h1 class="card-title pricing-card-title">{{ product.price }} ₽</h1>
-		            <p class="card-text">{{ product.description|truncatechars:100 }}</p>
-		            <p class="card-text"><small class="text-body-secondary">{{ product.created_at|date:"d.m.Y" }}</small></p>
+                    <p class="card-text">{{ product.description|truncatechars:100 }}</p>
+                    <p class="card-text"><small class="text-body-secondary">{{ product.created_at|date:"d.m.Y" }}</small></p>
                     <a href="{% url 'catalog:products_detail' product.pk %}" class="btn btn-lg btn-block btn-outline-primary">Посмотреть</a>
                     <button type="button" class="btn btn-lg btn-block btn-outline-primary">Купить</button>
                 </div>
@@ -26,16 +27,16 @@
     </div>
 
     <div class="d-flex justify-content-center mb-4">
-        <span class="align-self-center my-auto mx-2">Страница {{ product_list.number }} из {{ product_list.paginator.num_pages }}</span>
+        <span class="align-self-center my-auto mx-2">Страница {{ page_obj.number }} из {{ page_obj.paginator.num_pages }}</span>
 
-        {% if product_list.has_previous %}
+        {% if page_obj.has_previous %}
             <a href="?page=1" class="btn btn-primary me-2">Первая</a>
-            <a href="?page={{ product_list.previous_page_number }}" class="btn btn-primary me-2">Назад</a>
+            <a href="?page={{ page_obj.previous_page_number }}" class="btn btn-primary me-2">Назад</a>
         {% endif %}
 
-        {% if product_list.has_next %}
-            <a href="?page={{ product_list.next_page_number }}" class="btn btn-primary me-2">Вперед</a>
-            <a href="?page={{ product_list.paginator.num_pages }}" class="btn btn-primary">Последняя</a>
+        {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}" class="btn btn-primary me-2">Вперед</a>
+            <a href="?page={{ page_obj.paginator.num_pages }}" class="btn btn-primary">Последняя</a>
         {% endif %}
     </div>
 

@@ -1,4 +1,4 @@
-{% extends 'home.html' %}
+{% extends 'catalog/home.html' %}
 {% load my_tags %}
 {% block content %}
 <div class="container mb-5 mt-5">
@@ -7,11 +7,11 @@
             <img src="{{ product.image | media_filter }}" class="img-fluid shadow" alt="{{ product.name }}" style="max-height: 500px; object-fit: contain;">
         </div>
         <div class="col-md-6 text-left d-flex flex-column justify-content-start">
-            <h1 class="my-0 font-weight-normal mb-3">{{ product.name }}</h1>
-            <p class="fs-5 mb-3" style="text-align: justify;">{{ product.description }}</p>
+            <h1 class="my-0 font-weight-normal mb-3">{{ object.name }}</h1>
+            <p class="fs-5 mb-3" style="text-align: justify;">{{ object.description }}</p>
             <div class="d-flex justify-content-end align-items-center mb-3">
 
-                <h1 class="card-title pricing-card-title me-2">Цена: {{ product.price }} ₽</h1>
+                <h1 class="card-title pricing-card-title me-2">Цена: {{ object.price }} ₽</h1>
             </div>
             <div class="d-flex justify-content-end align-items-center mb-3">
                 <button type="button" class="btn btn-lg btn-outline-primary me-3">Купить</button>
