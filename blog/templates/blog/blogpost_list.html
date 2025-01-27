@@ -1,35 +1,37 @@
 {% extends 'blog/base.html' %}
 
-{% block title %}Список постов - Мой блог{% endblock %}
+{% load my_tags %}
 
 {% block content %}
-<div class="container mt-5">
-    <h1 class="text-center mb-4">Список постов</h1>
-    <div class="text-end mb-3">
-        <a href="{% url 'blog:post_create' %}" class="btn btn-primary">Добавить новый пост</a>
-    </div>
-
-    <div class="row">
-        {% for post in posts %}
-        <div class="col-md-4 mb-4">
-            <div class="card shadow-sm">
-                {% if post.preview_image %}
-                <img src="{{ post.preview_image.url }}" class="card-img-top" alt="{{ post.title }}">
-                {% endif %}
-                <div class="card-body">
-                    <h5 class="card-title">{{ post.title }}</h5>
-                    <p class="card-text">{{ post.content|truncatewords:20 }}</p>
-                    <p class="text-muted">Дата создания: {{ post.created_at|date:"d.m.Y" }}</p>
-                    <div class="d-flex justify-content-between align-items-center">
-                        <a href="{% url 'blog:post_detail' post.pk %}" class="btn btn-outline-primary">Читать далее</a>
-                        <small class="text-muted">Просмотров: {{ post.views_count }}</small>
-                    </div>
+<div class="row mb-2">
+    <div class="col-md-6">
+        <div class="row g-0 border rounded overflow-hidden flex-md-row mb-4 shadow-sm h-md-250 position-relative">
+            <div class="col p-4 d-flex flex-column position-static">
+                <h3 class="mb-0">Рекомендуемый пост</h3>
+                <div class="mb-1 text-muted">12 Ноября</div>
+                <p class="card-text mb-auto">Это более широкая карточка с вспомогательным текстом ниже в качестве естественного перехода к дополнительному контенту.</p>
+                <a href="#" class="stretched-link">Продолжить чтение</a>
+                <div class="view-count text-muted" style="position: absolute; bottom: 25px; right: 220px; font-size: 14px; color: #6c757d;">
+                    Просмотров: 10
                 </div>
             </div>
+            <div class="col-auto d-none d-lg-block">
+                <svg class="bd-placeholder-img" width="200" height="250" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder: Эскиз" preserveAspectRatio="xMidYMid slice" focusable="false"><title>Placeholder</title><rect width="100%" height="100%" fill="#55595c"/><text x="50%" y="50%" fill="#eceeef" dy=".3em">Эскиз</text></svg>
+            </div>
         </div>
-        {% empty %}
-        <p>Постов пока нет.</p>
-        {% endfor %}
+    </div>
+    <div class="col-md-6">
+        <div class="row g-0 border rounded overflow-hidden flex-md-row mb-4 shadow-sm h-md-250 position-relative">
+            <div class="col p-4 d-flex flex-column position-static">
+                <h3 class="mb-0">Заголовок поста</h3>
+                <div class="mb-1 text-muted">11 Ноября</div>
+                <p class="mb-auto">Это более широкая карточка с вспомогательным текстом ниже в качестве естественного перехода к дополнительному контенту.</p>
+                <a href="#" class="stretched-link">Продолжить чтение</a>
+            </div>
+            <div class="col-auto d-none d-lg-block">
+                <svg class="bd-placeholder-img" width="200" height="250" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder: Эскиз" preserveAspectRatio="xMidYMid slice" focusable="false"><title>Placeholder</title><rect width="100%" height="100%" fill="#55595c"/><text x="50%" y="50%" fill="#eceeef" dy=".3em">Эскиз</text></svg>
+            </div>
+        </div>
     </div>
 </div>
 {% endblock %}
