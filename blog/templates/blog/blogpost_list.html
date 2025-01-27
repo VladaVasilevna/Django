@@ -1,37 +1,65 @@
-{% extends 'blog/base.html' %}
+{% load static %}
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="theme-color" content="#7952b3">
+    <title>Luxora - Блог</title>
+    <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
+    <style>
+      {% include 'blog/includes/style.html' %}
+    </style>
+  </head>
+  <body>
+    <header>
+      {% include 'catalog/includes/inc_menu.html' %}
 
-{% load my_tags %}
+    </header>
 
-{% block content %}
-<div class="row mb-2">
+    <div class="container">
+      {% include 'blog/includes/nav.html' %}
+    </div>
+
+    <main class="container">
+      <div class="p-4 p-md-5 mb-4 text-white rounded bg-dark text-center">
+        <h1 class="display-4 fst-italic">FASHION / STYLE BLOG</h1>
+      </div>
+
+      <div class="row mb-2">
     <div class="col-md-6">
         <div class="row g-0 border rounded overflow-hidden flex-md-row mb-4 shadow-sm h-md-250 position-relative">
-            <div class="col p-4 d-flex flex-column position-static">
-                <h3 class="mb-0">Рекомендуемый пост</h3>
-                <div class="mb-1 text-muted">12 Ноября</div>
-                <p class="card-text mb-auto">Это более широкая карточка с вспомогательным текстом ниже в качестве естественного перехода к дополнительному контенту.</p>
+            <div class="col p-4 d-flex flex-column position-static text-block">
+                <h3 class="mb-0">{{ post.title }}</h3>
+                <div class="mb-1 text-muted">{{ post.created_at }}</div>
+                <p class="card-text mb-auto">{{ post.content|truncatewords:30 }}</p>
                 <a href="#" class="stretched-link">Продолжить чтение</a>
                 <div class="view-count text-muted" style="position: absolute; bottom: 25px; right: 220px; font-size: 14px; color: #6c757d;">
-                    Просмотров: 10
+                    Просмотров: {{ post.views_count }}
                 </div>
             </div>
             <div class="col-auto d-none d-lg-block">
-                <svg class="bd-placeholder-img" width="200" height="250" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder: Эскиз" preserveAspectRatio="xMidYMid slice" focusable="false"><title>Placeholder</title><rect width="100%" height="100%" fill="#55595c"/><text x="50%" y="50%" fill="#eceeef" dy=".3em">Эскиз</text></svg>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-6">
-        <div class="row g-0 border rounded overflow-hidden flex-md-row mb-4 shadow-sm h-md-250 position-relative">
-            <div class="col p-4 d-flex flex-column position-static">
-                <h3 class="mb-0">Заголовок поста</h3>
-                <div class="mb-1 text-muted">11 Ноября</div>
-                <p class="mb-auto">Это более широкая карточка с вспомогательным текстом ниже в качестве естественного перехода к дополнительному контенту.</p>
-                <a href="#" class="stretched-link">Продолжить чтение</a>
-            </div>
-            <div class="col-auto d-none d-lg-block">
-                <svg class="bd-placeholder-img" width="200" height="250" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder: Эскиз" preserveAspectRatio="xMidYMid slice" focusable="false"><title>Placeholder</title><rect width="100%" height="100%" fill="#55595c"/><text x="50%" y="50%" fill="#eceeef" dy=".3em">Эскиз</text></svg>
+                <img src="{{ post.preview_image.url }}" alt="{{ post.title }}" width="200" height="250" onerror="this.style.display='none';" />
             </div>
         </div>
     </div>
 </div>
-{% endblock %}
+
+
+      <div class="row g-5">
+        <div class="col-md-8">
+          <nav class="blog-pagination" aria-label="Pagination">
+            <a class="btn btn-outline-primary" href="#">Назад</a>
+            <a class="btn btn-outline-secondary disabled" href="#" tabindex="-1" aria-disabled="true">Далее</a>
+          </nav>
+        </div>
+      </div>
+    </main>
+
+    <footer class="flex-column flex-md-row align-items-center p-4 my-md-5 px-md-4 bg-white border-top box-shadow">
+        {% include 'catalog/includes/footer.html' %}
+    </footer>
+    <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+  </body>
+</html>

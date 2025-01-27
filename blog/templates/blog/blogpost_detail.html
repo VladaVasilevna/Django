@@ -1,9 +1,14 @@
-{% extends 'blog/base.html' %}
+{% extends "blog/base.html" %}
 
 {% block content %}
-<h2>{{ post.title }}</h2>
+<h1>{{ post.title }}</h1>
 <p>{{ post.content }}</p>
+<img src="{{ post.preview_image.url }}" alt="{{ post.title }}">
 <p>Дата создания: {{ post.created_at }}</p>
+<p>Опубликовано: {{ post.is_published }}</p>
+<p>Количество просмотров: {{ post.views_count }}</p>
 <a href="{% url 'blog:post_edit' post.pk %}">Редактировать</a>
 <a href="{% url 'blog:post_delete' post.pk %}">Удалить</a>
+<a href="{% url 'blog:post_list' %}">Назад к списку</a>
 {% endblock %}
+
