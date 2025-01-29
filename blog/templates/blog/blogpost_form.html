@@ -2,31 +2,44 @@
 
 {% load static %}
 {% block content %}
+
 <div class="container">
     <h2 class="text-center mb-4">Добавить новый пост</h2>
     <form method="post" enctype="multipart/form-data" class="w-50 mx-auto">
         {% csrf_token %}
 
         <div class="mb-3">
-            <label for="id_name" class="form-label">Заголовок:</label>
-            <input type="text" class="form-control" id="id_name" name="name" required>
+            <label for="id_title" class="form-label">Заголовок:</label>
+            <input type="text" class="form-control {% if form.title.errors %}is-invalid{% endif %}" id="id_title" name="title" value="{{ form.title.value }}" required>
+            {% for error in form.title.errors %}
+                <div class="invalid-feedback">{{ error }}</div>
+            {% endfor %}
         </div>
 
         <div class="mb-3">
-            <label for="id_description" class="form-label">Содержимое поста:</label>
-            <textarea class="form-control" id="id_description" name="description" rows="3" required></textarea>
+            <label for="id_content" class="form-label">Содержимое поста:</label>
+            <textarea class="form-control {% if form.content.errors %}is-invalid{% endif %}" id="id_content" name="content" rows="3" required>{{ form.content.value }}</textarea>
+            {% for error in form.content.errors %}
+                <div class="invalid-feedback">{{ error }}</div>
+            {% endfor %}
         </div>
 
         <div class="mb-3">
-            <label for="id_image" class="form-label">Загрузите изображение:</label>
-            <input class="form-control" type="file" id="id_image" name="image" accept="image/*">
+            <label for="id_preview_image" class="form-label">Загрузите изображение:</label>
+            <input type="file" class="form-control" id="id_preview_image" name="preview_image" accept="image/*" required>
+            {% if form.preview_image.errors %}
+                <div class="invalid-feedback">{{ form.preview_image.errors.0 }}</div>
+            {% endif %}
         </div>
 
 
-        <div class="mb-5">
-            <button type="submit" class="btn btn-primary">Сохранить</button>
+        <div class="mb-3 form-check">
+            <input type="checkbox" class="form-check-input" id="id_is_published" name="is_published">
+            <label class="form-check-label" for="id_is_published">Опубликовать:</label>
         </div>
 
+        <button type="submit" class="btn btn-primary">Сохранить</button>
+        <a href="{% url 'blog:all_posts' %}" class="btn btn-secondary">Назад</a>
     </form>
 </div>
 {% endblock %}

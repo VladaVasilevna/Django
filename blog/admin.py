@@ -5,7 +5,7 @@ from .models import BlogPost
 @admin.register(BlogPost)
 class BlogPostAdmin(admin.ModelAdmin):
     # Поля, которые будут отображаться в списке объектов
-    list_display = ('title', 'created_at', 'is_published', 'views_count')
+    list_display = ('id', 'title', 'created_at', 'is_published', 'views_count')
 
     # Поля, по которым можно фильтровать записи
     list_filter = ('is_published', 'created_at')

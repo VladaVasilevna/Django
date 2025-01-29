@@ -15,8 +15,8 @@
   <body>
     <header>
       {% include 'catalog/includes/inc_menu.html' %}
-
     </header>
+
     {% if is_base %}
     <div class="container">
       {% include 'blog/includes/nav.html' %}
@@ -33,8 +33,8 @@
           <div class="row g-0 border rounded overflow-hidden flex-md-row mb-4 shadow-sm h-md-250 position-relative">
                 <div class="col p-4 d-flex flex-column position-static text-block">
                     <h3 class="mb-0">{{ post.title }}</h3>
-                    <div class="mb-1 text-muted">{{ post.created_at }}</div>
-                    <p class="card-text mb-auto">{{ post.content|truncatewords:30 }}</p>
+                    <div class="mb-1 text-muted">{{ post.created_at|date:"d F Y H:i" }}</div>
+                    <p class="card-text mb-auto">{{ post.content|truncatewords:12 }}</p>
                     <a href="{% url 'blog:post_detail' post.pk %}" class="stretched-link">Продолжить чтение</a>
                     <div class="view-count text-muted" style="position: absolute; bottom: 25px; right: 220px; font-size: 14px; color: #6c757d;">
                         Просмотров: {{ post.views_count }}
@@ -75,6 +75,8 @@
     <footer class="flex-column flex-md-row align-items-center p-4 my-md-5 px-md-4 bg-white border-top box-shadow">
     {% include 'catalog/includes/footer.html' %}
     </footer>
+
     <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+
   </body>
 </html>
