@@ -55,13 +55,19 @@
 
 
       <div class="row g-5">
-        <div class="col-md-8">
-          <nav class="blog-pagination" aria-label="Pagination">
-            <a class="btn btn-outline-primary" href="#">Назад</a>
-            <a class="btn btn-outline-secondary disabled" href="#" tabindex="-1" aria-disabled="true">Далее</a>
-          </nav>
-        </div>
+          <div class="col-md-8 mx-auto">
+              <nav class="blog-pagination d-flex justify-content-center align-items-center" aria-label="Pagination">
+                  <span class="current-page mx-3">Страница {{ page_obj.number }} из {{ page_obj.paginator.num_pages }}</span>
+                  {% if page_obj.has_previous %}
+                    <a class="btn btn-outline-dark me-2" href="?page={{ page_obj.previous_page_number }}">Назад</a>
+                  {% endif %}
+                  {% if page_obj.has_next %}
+                    <a class="btn btn-outline-dark" href="?page={{ page_obj.next_page_number }}">Далее</a>
+                  {% endif %}
+              </nav>
+          </div>
       </div>
+
     </main>
 
     <footer class="flex-column flex-md-row align-items-center p-4 my-md-5 px-md-4 bg-white border-top box-shadow">

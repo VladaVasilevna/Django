@@ -8,6 +8,7 @@
     <nav class="ms-5 me-auto">
         <a class="p-2 btn btn-outline-primary me-2" href="/">Каталог</a>
         <a class="p-2 btn btn-outline-primary me-2" href="{% url 'catalog:contacts' %}">Контакты</a>
+        <a class="p-2 btn btn-outline-primary me-2" href="{% url 'blog:base' %}">Блог</a>
     </nav>
     {% if is_blog %}
         <div class="d-flex justify-content-end align-items-center">

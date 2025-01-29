@@ -4,13 +4,13 @@
 {% block content %}
 
 <div class="container">
-    <h2 class="text-center mb-4">Добавить новый пост</h2>
+    <h2 class="text-center mb-4">{% if post %}Редактировать пост{% else %}Добавить новый пост{% endif %}</h2>
     <form method="post" enctype="multipart/form-data" class="w-50 mx-auto">
         {% csrf_token %}
 
         <div class="mb-3">
             <label for="id_title" class="form-label">Заголовок:</label>
-            <input type="text" class="form-control {% if form.title.errors %}is-invalid{% endif %}" id="id_title" name="title" value="{{ form.title.value }}" required>
+            <input type="text" class="form-control {% if form.title.errors %}is-invalid{% endif %}" id="id_title" name="title" value="{% if post %}{{ post.title }}{% endif %}" required>
             {% for error in form.title.errors %}
                 <div class="invalid-feedback">{{ error }}</div>
             {% endfor %}
@@ -18,7 +18,7 @@
 
         <div class="mb-3">
             <label for="id_content" class="form-label">Содержимое поста:</label>
-            <textarea class="form-control {% if form.content.errors %}is-invalid{% endif %}" id="id_content" name="content" rows="3" required>{{ form.content.value }}</textarea>
+            <textarea class="form-control {% if form.content.errors %}is-invalid{% endif %}" id="id_content" name="content" rows="3" required>{% if post %}{{ post.content }}{% endif %}</textarea>
             {% for error in form.content.errors %}
                 <div class="invalid-feedback">{{ error }}</div>
             {% endfor %}
@@ -26,7 +26,7 @@
 
         <div class="mb-3">
             {% if post.preview_image %}
-                <p class="mt-2">Изображение: {{ post.preview_image.name }}</p>  <!-- Отображаем название файла -->
+                <p class="mt-2">Изображение: {{ post.preview_image.name }}</p>
             {% endif %}
             <label for="id_preview_image" class="form-label">Загрузите другое изображение (необязательно):</label>
             <input type="file" class="form-control {% if form.preview_image.errors %}is-invalid{% endif %}" id="id_preview_image" name="preview_image" accept="image/*">
