@@ -23,28 +23,35 @@
     </div>
 
     <main class="container">
-      <div class="p-4 p-md-5 mb-4 text-white rounded bg-dark text-center">
-        <h1 class="display-4 fst-italic">FASHION / STYLE BLOG</h1>
+      <div class="p-4 p-md-5 mb-3 text-white rounded bg-dark text-center">
+          <h1 class="display-4 fst-italic">FASHION / STYLE BLOG</h1>
       </div>
 
+        <div class="text-end mb-3">
+            <a href="{% url 'blog:post_create' %}" class="btn btn-dark">Добавить пост</a>
+        </div>
+
       <div class="row mb-2">
-    <div class="col-md-6">
-        <div class="row g-0 border rounded overflow-hidden flex-md-row mb-4 shadow-sm h-md-250 position-relative">
-            <div class="col p-4 d-flex flex-column position-static text-block">
-                <h3 class="mb-0">{{ post.title }}</h3>
-                <div class="mb-1 text-muted">{{ post.created_at }}</div>
-                <p class="card-text mb-auto">{{ post.content|truncatewords:30 }}</p>
-                <a href="#" class="stretched-link">Продолжить чтение</a>
-                <div class="view-count text-muted" style="position: absolute; bottom: 25px; right: 220px; font-size: 14px; color: #6c757d;">
-                    Просмотров: {{ post.views_count }}
+        {% for post in posts %}
+        <div class="col-md-6">
+            <div class="row g-0 border rounded overflow-hidden flex-md-row mb-4 shadow-sm h-md-250 position-relative">
+                <div class="col p-4 d-flex flex-column position-static text-block">
+                    <h3 class="mb-0">{{ post.title }}</h3>
+                    <div class="mb-1 text-muted">{{ post.created_at }}</div>
+                    <p class="card-text mb-auto">{{ post.content|truncatewords:12 }}</p>
+                    <a href="{% url 'blog:post_detail' post.pk %}" class="stretched-link">Продолжить чтение</a>
+                    <div class="view-count text-muted" style="position: absolute; bottom: 25px; right: 220px; font-size: 14px; color: #6c757d;">
+                        Просмотров: {{ post.views_count }}
+                    </div>
+                </div>
+                <div class="col-auto d-none d-lg-block">
+                    <img src="{{ post.preview_image.url }}" alt="{{ post.title }}" width="200" height="250" onerror="this.style.display='none';" />
                 </div>
             </div>
-            <div class="col-auto d-none d-lg-block">
-                <img src="{{ post.preview_image.url }}" alt="{{ post.title }}" width="200" height="250" onerror="this.style.display='none';" />
-            </div>
         </div>
-    </div>
-</div>
+        {% endfor %}
+      </div>
+
 
 
       <div class="row g-5">
