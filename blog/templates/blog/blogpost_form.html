@@ -25,8 +25,11 @@
         </div>
 
         <div class="mb-3">
-            <label for="id_preview_image" class="form-label">Загрузите изображение:</label>
-            <input type="file" class="form-control" id="id_preview_image" name="preview_image" accept="image/*" required>
+            {% if post.preview_image %}
+                <p class="mt-2">Изображение: {{ post.preview_image.name }}</p>  <!-- Отображаем название файла -->
+            {% endif %}
+            <label for="id_preview_image" class="form-label">Загрузите другое изображение (необязательно):</label>
+            <input type="file" class="form-control {% if form.preview_image.errors %}is-invalid{% endif %}" id="id_preview_image" name="preview_image" accept="image/*">
             {% if form.preview_image.errors %}
                 <div class="invalid-feedback">{{ form.preview_image.errors.0 }}</div>
             {% endif %}
@@ -34,7 +37,7 @@
 
 
         <div class="mb-3 form-check">
-            <input type="checkbox" class="form-check-input" id="id_is_published" name="is_published">
+            <input type="checkbox" class="form-check-input" id="id_is_published" name="is_published" {% if post.is_published %}checked{% endif %}>
             <label class="form-check-label" for="id_is_published">Опубликовать:</label>
         </div>
 
