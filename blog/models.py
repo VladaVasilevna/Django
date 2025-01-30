@@ -6,7 +6,7 @@ class BlogPost(models.Model):
     preview_image = models.ImageField(upload_to='blog/images/')  # Превью (изображение)
     created_at = models.DateTimeField(auto_now_add=True)  # Дата создания
     is_published = models.BooleanField(default=False)  # Признак публикации
-    views_count = models.PositiveIntegerField(default=0)  # Количество просмотров
+    views_count = models.PositiveIntegerField(default=0, editable=False)  # Количество просмотров
 
     def __str__(self):
         return self.title
