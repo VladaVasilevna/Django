@@ -1,9 +1,10 @@
 from django.db import models
 
+
 class BlogPost(models.Model):
     title = models.CharField(max_length=200)  # Заголовок
     content = models.TextField()  # Содержимое
-    preview_image = models.ImageField(upload_to='blog/images/')  # Превью (изображение)
+    preview_image = models.ImageField(upload_to="blog/images/")  # Превью (изображение)
     created_at = models.DateTimeField(auto_now_add=True)  # Дата создания
     is_published = models.BooleanField(default=False)  # Признак публикации
     views_count = models.PositiveIntegerField(default=0, editable=False)  # Количество просмотров

@@ -1,0 +1,16 @@
+<h1>{% if recipient %}Редактировать{% else %}Добавить{% endif %} получателя</h1>
+
+<form method="post">
+    {% csrf_token %}
+    <label for="full_name">Ф.И.О:</label><br>
+    <input type="text" id="full_name" name="full_name" value="{{ recipient.full_name|default:'' }}"><br><br>
+
+    <label for="email">Email:</label><br>
+    <input type="email" id="email" name="email" value="{{ recipient.email|default:'' }}"><br><br>
+
+    <label for="comment">Комментарий:</label><br>
+    <textarea id="comment" name="comment">{{ recipient.comment|default:'' }}</textarea><br><br>
+
+    <button type="submit">Сохранить</button>
+    <a href="{% url 'newsletter:recipient_list' %}">Отмена</a>
+</form>
