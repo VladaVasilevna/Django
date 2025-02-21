@@ -14,6 +14,7 @@ class Category(models.Model):
         verbose_name = "Категория"
         verbose_name_plural = "Категории"
 
+
 class Product(models.Model):
     name = models.CharField(max_length=100, verbose_name="Продукт", help_text="Введите название продукта")
     description = models.TextField(
@@ -47,10 +48,13 @@ class Product(models.Model):
         verbose_name_plural = "Продукты"
         ordering = ["name", "category", "price"]
 
+
 class Contact(models.Model):
     country = models.CharField(max_length=100)
     inn = models.CharField(max_length=20)
     address = models.CharField(max_length=255)
+
+    objects = models.Manager()
 
     def __str__(self):
         return self.country

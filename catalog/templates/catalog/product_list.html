@@ -30,13 +30,11 @@
         <span class="align-self-center my-auto mx-2">Страница {{ page_obj.number }} из {{ page_obj.paginator.num_pages }}</span>
 
         {% if page_obj.has_previous %}
-            <a href="?page=1" class="btn btn-primary me-2">Первая</a>
             <a href="?page={{ page_obj.previous_page_number }}" class="btn btn-primary me-2">Назад</a>
         {% endif %}
 
         {% if page_obj.has_next %}
             <a href="?page={{ page_obj.next_page_number }}" class="btn btn-primary me-2">Вперед</a>
-            <a href="?page={{ page_obj.paginator.num_pages }}" class="btn btn-primary">Последняя</a>
         {% endif %}
     </div>
 

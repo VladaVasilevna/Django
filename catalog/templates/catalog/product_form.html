@@ -2,42 +2,86 @@
 {% load static %}
 {% block content %}
 <div class="container">
-    <h2 class="text-center mb-4">Добавить новый товар</h2>
+    <h2 class="text-center mb-4">
+        {% if form.instance.pk %}
+            Редактировать товар
+        {% else %}
+            Добавить новый товар
+        {% endif %}
+    </h2>
     <form method="post" enctype="multipart/form-data" class="w-50 mx-auto">
         {% csrf_token %}
 
         <div class="mb-3">
-            <label for="id_name" class="form-label">Наименование товара:</label>
-            <input type="text" class="form-control" id="id_name" name="name" required>
+            <label class="form-label">Наименование товара:</label>
+            {{ form.name }}
+            {% if form.name.errors %}
+                <div class="text-danger">
+                    {% for error in form.name.errors %}
+                        <small>{{ error }}</small><br>
+                    {% endfor %}
+                </div>
+            {% endif %}
         </div>
 
         <div class="mb-3">
-            <label for="id_description" class="form-label">Описание:</label>
-            <textarea class="form-control" id="id_description" name="description" rows="3" required></textarea>
+            <label class="form-label">Описание:</label>
+            {{ form.description }}
+            {% if form.description.errors %}
+                <div class="text-danger">
+                    {% for error in form.description.errors %}
+                        <small>{{ error }}</small><br>
+                    {% endfor %}
+                </div>
+            {% endif %}
         </div>
 
         <div class="mb-3">
-            <label for="id_image" class="form-label">Загрузите изображение продукта:</label>
-            <input class="form-control" type="file" id="id_image" name="image" accept="image/*">
+            {% if form.instance.image %}
+                <p class="mt-2">Текущее изображение:
+                    <a href="{{ form.instance.image.url }}" target="_blank">{{ form.instance.image.url }}</a>
+                </p>
+            {% endif %}
+
+            {% if form.instance.image %}
+            <label for="{{ form.image.id_for_label }}" class="form-label">Загрузите другое изображение (необязательно):</label>
+            <input type="file" class="form-control {% if form.image.errors %}is-invalid{% endif %}" id="{{ form.image.id_for_label }}" name="{{ form.image.html_name }}" accept="image/*">
+            {% else %}
+            <label for="{{ form.image.id_for_label }}" class="form-label">Загрузите изображение товара:</label>
+            <input type="file" class="form-control {% if form.image.errors %}is-invalid{% endif %}" name="{{ form.image.html_name }}" accept="image/*">
+            {% endif %}
+
+            {% if form.image.errors %}
+                <div class="invalid-feedback">{{ form.image.errors.0 }}</div>
+            {% endif %}
         </div>
 
         <div class="mb-3">
-            <label for="id_category" class="form-label">Выберите категорию:</label>
-            <select class="form-select" id="id_category" name="category">
-                <option value="">Выберите категорию</option>
-                {% for category in form.category.field.queryset %}
-                    <option value="{{ category.id }}">{{ category.name }}</option>
-                {% endfor %}
-            </select>
+            <label class="form-label">Выберите категорию:</label>
+            {{ form.category }}
         </div>
 
         <div class="mb-3">
-            <label for="id_price" class="form-label">Цена за покупку:</label>
-            <input type="number" step="0.01" class="form-control" id="id_price" name="price" required>
+            <label class="form-label">Цена за покупку:</label>
+            {{ form.price }}
+            {% if form.price.errors %}
+                <div class="text-danger">
+                    {% for error in form.price.errors %}
+                        <small>{{ error }}</small><br>
+                    {% endfor %}
+                </div>
+            {% endif %}
         </div>
 
         <div class="mb-5">
-            <button type="submit" class="btn btn-primary">Добавить товар</button>
+            <button type="submit" class="btn btn-primary">
+                {% if form.instance.pk %}
+                    Сохранить изменения
+                {% else %}
+                    Добавить товар
+                {% endif %}
+            </button>
+            <a href="{% if form.instance.pk %}{% url 'catalog:products_detail' form.instance.pk %}{% else %}{% url 'catalog:home' %}{% endif %}" class="btn btn-secondary">Назад</a>
         </div>
 
     </form>
