@@ -1,5 +1,7 @@
 from django.db import models
 
+from users.models import User
+
 
 class Category(models.Model):
     name = models.CharField(max_length=100, verbose_name="Категория продукта", help_text="Введите название категории")
