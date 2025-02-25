@@ -26,11 +26,11 @@
       <div class="p-4 p-md-5 mb-3 text-white rounded bg-dark text-center">
           <h1 class="display-4 fst-italic">FASHION / STYLE BLOG</h1>
       </div>
-
+        {% if user.is_authenticated %}
         <div class="text-end mb-3">
             <a href="{% url 'blog:post_create' %}" class="btn btn-dark">Добавить пост</a>
         </div>
-
+        {% endif %}
       <div class="row mb-2">
         {% for post in posts %}
         <div class="col-md-6">
