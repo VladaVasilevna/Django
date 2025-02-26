@@ -1,10 +1,11 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.core.exceptions import PermissionDenied
 from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.views import View
 from django.views.generic import CreateView, DeleteView, DetailView, ListView, UpdateView
 
-from .forms import ProductForm
+from .forms import ProductForm, ProductModeratorForm
 from .models import Contact, Product
 
 
@@ -34,6 +35,10 @@ class AddProductView(LoginRequiredMixin, CreateView):
     success_url = reverse_lazy("catalog:home")
 
     def form_valid(self, form):
+        product = form.save()
+        user = self.request.user
+        product.owner = user
+        product.save()
         return super().form_valid(form)
 
     def form_invalid(self, form):
@@ -48,6 +53,14 @@ class UpdateProductView(LoginRequiredMixin, UpdateView):
 
     def form_invalid(self, form):
         return self.render_to_response(self.get_context_data(form=form))
+
+    def get_form_class(self):
+        user = self.request.user
+        if user == self.object.owner:
+            return ProductForm
+        if user.has_perm("catalog.can_edit_category") and user.has_perm("catalog.can_edit_description"):
+            return ProductModeratorForm
+        raise PermissionDenied
 
 
 class DeleteProductView(LoginRequiredMixin, DeleteView):

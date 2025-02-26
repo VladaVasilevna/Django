@@ -42,6 +42,8 @@ class Product(models.Model):
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата создания")
     updated_at = models.DateTimeField(auto_now=True, verbose_name="Дата последнего изменения")
 
+    owner = models.ForeignKey(User, verbose_name="Владелец", help_text="Укажите владельца продукта", blank=True, null=True, on_delete=models.SET_NULL)
+
     def __str__(self):
         return self.name
 
@@ -49,14 +51,16 @@ class Product(models.Model):
         verbose_name = "Продукт"
         verbose_name_plural = "Продукты"
         ordering = ["name", "category", "price"]
+        permissions = [
+            ("can_edit_category", "Can edit category"),
+            ("can_edit_description", "Can edit description")
+        ]
 
 
 class Contact(models.Model):
     country = models.CharField(max_length=100)
     inn = models.CharField(max_length=20)
     address = models.CharField(max_length=255)
-
-    objects = models.Manager()
 
     def __str__(self):
         return self.country

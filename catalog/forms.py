@@ -10,6 +10,7 @@ class ProductForm(forms.ModelForm):
     class Meta:
         model = Product
         fields = ["name", "description", "image", "category", "price"]
+        exclude = ("owner",)
 
     category = forms.ModelChoiceField(
         queryset=Category.objects.all(), empty_label="Выберите категорию", required=False
@@ -68,3 +69,8 @@ class ProductForm(forms.ModelForm):
                 raise ValidationError("Размер файла не должен превышать 5 МБ.")
 
         return image
+
+class ProductModeratorForm(forms.ModelForm):
+    class Meta:
+        model = Product
+        fields = ["description", "category"]
