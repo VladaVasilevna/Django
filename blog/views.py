@@ -1,8 +1,10 @@
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.core.exceptions import PermissionDenied
 from django.urls import reverse_lazy
 from django.views import View
 from django.views.generic import CreateView, DeleteView, DetailView, ListView, UpdateView
 
-from .forms import BlogPostForm
+from .forms import BlogPostForm, BlogContentManagerForm
 from .models import BlogPost
 
 
@@ -35,7 +37,7 @@ class BlogPostDetailView(BlogBaseView, DetailView):
         return post
 
 
-class BlogPostCreateView(BlogBaseView, CreateView):
+class BlogPostCreateView(LoginRequiredMixin, BlogBaseView, CreateView):
     model = BlogPost
     form_class = BlogPostForm
     template_name = "blog/blogpost_form.html"
@@ -44,6 +46,10 @@ class BlogPostCreateView(BlogBaseView, CreateView):
     def form_valid(self, form):
         # Устанавливаем is_published в True или False в зависимости от состояния чекбокса
         form.instance.is_published = self.request.POST.get("is_published") == "on"
+        post = form.save()
+        user = self.request.user
+        post.owner = user
+        post.save()
         return super().form_valid(form)
 
     def form_invalid(self, form):
@@ -51,7 +57,7 @@ class BlogPostCreateView(BlogBaseView, CreateView):
         return self.render_to_response(self.get_context_data(form=form))
 
 
-class BlogPostUpdateView(BlogBaseView, UpdateView):
+class BlogPostUpdateView(LoginRequiredMixin, BlogBaseView, UpdateView):
     model = BlogPost
     form_class = BlogPostForm
     template_name = "blog/blogpost_form.html"
@@ -61,6 +67,14 @@ class BlogPostUpdateView(BlogBaseView, UpdateView):
         context = super().get_context_data(**kwargs)
         context["post"] = self.object
         return context
+
+    def get_form_class(self):
+        user = self.request.user
+        if user == self.object.owner:
+            return BlogPostForm
+        if user.has_perm("blog.can_edit_content") and user.has_perm("blog.can_edit_is_published"):
+            return BlogContentManagerForm
+        raise PermissionDenied
 
 
 class BlogPostDeleteView(BlogBaseView, DeleteView):

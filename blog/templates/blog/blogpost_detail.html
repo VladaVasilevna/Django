@@ -20,7 +20,7 @@
     </div>
 
     <div class="d-flex justify-content-between mb-3">
-        {% if user.is_authenticated %}
+        {% if perms.blog.can_edit_content and perms.blog.can_edit_is_published or user == post.owner %}
         <div>
             <a href="{% url 'blog:post_edit' post.pk %}" class="btn btn-lg btn-outline-dark me-3">Редактировать</a>
             <a href="{% url 'blog:post_delete' post.pk %}" class="btn btn-lg btn-outline-danger">Удалить</a>

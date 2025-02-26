@@ -7,6 +7,7 @@ class BlogPostForm(forms.ModelForm):
     class Meta:
         model = BlogPost
         fields = ["title", "content", "preview_image", "is_published"]
+        exclude = ("owner",)
 
         widgets = {
             "title": forms.TextInput(attrs={"class": "form-control", "placeholder": "Заголовок"}),
@@ -20,3 +21,8 @@ class BlogPostForm(forms.ModelForm):
         if not preview_image:
             raise forms.ValidationError("Изображение не загружено")
         return preview_image
+
+class BlogContentManagerForm(forms.ModelForm):
+    class Meta:
+        model = BlogPost
+        fields = ("content", "is_published")
