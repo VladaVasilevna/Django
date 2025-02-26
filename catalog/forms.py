@@ -73,4 +73,4 @@ class ProductForm(forms.ModelForm):
 class ProductModeratorForm(forms.ModelForm):
     class Meta:
         model = Product
-        fields = ["description", "category"]
+        fields = ["description", "category", "is_published"]

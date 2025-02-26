@@ -41,6 +41,7 @@ class Product(models.Model):
     price = models.IntegerField(verbose_name="Цена за покупку", help_text="Введите цену продукта")
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата создания")
     updated_at = models.DateTimeField(auto_now=True, verbose_name="Дата последнего изменения")
+    is_published = models.BooleanField(default=False)
 
     owner = models.ForeignKey(User, verbose_name="Владелец", help_text="Укажите владельца продукта", blank=True, null=True, on_delete=models.SET_NULL)
     views_counter = models.PositiveIntegerField(verbose_name="Счетчик просмотров", help_text="Укажите количество просмотров", default=0)
@@ -54,7 +55,8 @@ class Product(models.Model):
         ordering = ["name", "category", "price"]
         permissions = [
             ("can_edit_category", "Can edit category"),
-            ("can_edit_description", "Can edit description")
+            ("can_edit_description", "Can edit description"),
+            ("can_unpublish_product", "Can unpublish product"),
         ]
 
 

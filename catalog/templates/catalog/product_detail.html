@@ -24,6 +24,15 @@
                 <a href="{% url 'catalog:delete_product' product.pk %}" class="btn btn-lg btn-block btn-outline-danger">Удалить</a>
             </div>
             {% endif %}
+
+            {% if perms.catalog.can_unpublish_product %}
+            <div class="d-flex justify-content-end align-items-center mt-2">
+                <form action="{% url 'catalog:unpublish_product' product.pk %}" method="post">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-lg btn-block btn-outline-primary">Отменить публикацию</button>
+                </form>
+            </div>
+            {% endif %}
         </div>
     </div>
 </div>
