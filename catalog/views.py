@@ -25,8 +25,14 @@ class ContactsView(View):
         return render(request, "catalog/contacts.html", {"contacts": contacts})
 
 
-class ProductDetailView(DetailView):
+class ProductDetailView(LoginRequiredMixin, DetailView):
     model = Product
+
+    def get_object(self, queryset=None):
+        self.object = super().get_object(queryset)
+        self.object.views_counter += 1
+        self.object.save()
+        return self.object
 
 
 class AddProductView(LoginRequiredMixin, CreateView):

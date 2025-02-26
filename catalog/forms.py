@@ -10,7 +10,7 @@ class ProductForm(forms.ModelForm):
     class Meta:
         model = Product
         fields = ["name", "description", "image", "category", "price"]
-        exclude = ("owner",)
+        exclude = ("owner", "views_counter")
 
     category = forms.ModelChoiceField(
         queryset=Category.objects.all(), empty_label="Выберите категорию", required=False
