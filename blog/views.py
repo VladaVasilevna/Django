@@ -1,10 +1,10 @@
-from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import PermissionDenied
 from django.urls import reverse_lazy
 from django.views import View
 from django.views.generic import CreateView, DeleteView, DetailView, ListView, UpdateView
 
-from .forms import BlogPostForm, BlogContentManagerForm
+from .forms import BlogContentManagerForm, BlogPostForm
 from .models import BlogPost
 
 

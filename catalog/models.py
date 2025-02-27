@@ -43,8 +43,17 @@ class Product(models.Model):
     updated_at = models.DateTimeField(auto_now=True, verbose_name="Дата последнего изменения")
     is_published = models.BooleanField(default=False)
 
-    owner = models.ForeignKey(User, verbose_name="Владелец", help_text="Укажите владельца продукта", blank=True, null=True, on_delete=models.SET_NULL)
-    views_counter = models.PositiveIntegerField(verbose_name="Счетчик просмотров", help_text="Укажите количество просмотров", default=0)
+    owner = models.ForeignKey(
+        User,
+        verbose_name="Владелец",
+        help_text="Укажите владельца продукта",
+        blank=True,
+        null=True,
+        on_delete=models.SET_NULL,
+    )
+    views_counter = models.PositiveIntegerField(
+        verbose_name="Счетчик просмотров", help_text="Укажите количество просмотров", default=0
+    )
 
     def __str__(self):
         return self.name
