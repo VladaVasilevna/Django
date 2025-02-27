@@ -22,6 +22,7 @@ class BlogPostForm(forms.ModelForm):
             raise forms.ValidationError("Изображение не загружено")
         return preview_image
 
+
 class BlogContentManagerForm(forms.ModelForm):
     class Meta:
         model = BlogPost

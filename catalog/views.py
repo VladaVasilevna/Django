@@ -1,7 +1,7 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import PermissionDenied
-from django.shortcuts import render, redirect
-from django.urls import reverse_lazy, reverse
+from django.shortcuts import redirect, render
+from django.urls import reverse, reverse_lazy
 from django.views import View
 from django.views.generic import CreateView, DeleteView, DetailView, ListView, UpdateView
 
@@ -64,7 +64,11 @@ class UpdateProductView(LoginRequiredMixin, UpdateView):
         user = self.request.user
         if user == self.object.owner:
             return ProductForm
-        if user.has_perm("catalog.can_edit_category") and user.has_perm("catalog.can_edit_description") and user.has_perm("catalog.can_unpublish_product"):
+        if (
+            user.has_perm("catalog.can_edit_category")
+            and user.has_perm("catalog.can_edit_description")
+            and user.has_perm("catalog.can_unpublish_product")
+        ):
             return ProductModeratorForm
         raise PermissionDenied
 
@@ -80,14 +84,14 @@ class DeleteProductView(LoginRequiredMixin, DeleteView):
         return context
 
     def dispatch(self, request, *args, **kwargs):
-        if not request.user.has_perm('catalog.delete_product'):
+        if not request.user.has_perm("catalog.delete_product"):
             raise PermissionDenied
         return super().dispatch(request, *args, **kwargs)
 
 
 class UnpublishProductView(LoginRequiredMixin, View):
     def post(self, request, pk):
-        if not request.user.has_perm('catalog.can_unpublish_product'):
+        if not request.user.has_perm("catalog.can_unpublish_product"):
             raise PermissionDenied
         product = Product.objects.get(pk=pk)
         product.is_published = False

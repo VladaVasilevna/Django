@@ -10,7 +10,14 @@ class BlogPost(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)  # Дата создания
     is_published = models.BooleanField(default=False)  # Признак публикации
     views_count = models.PositiveIntegerField(default=0, editable=True)  # Количество просмотров
-    owner = models.ForeignKey(User, verbose_name="Владелец", help_text="Укажите владельца поста", blank=True, null=True, on_delete=models.SET_NULL) # Владелец публикации
+    owner = models.ForeignKey(
+        User,
+        verbose_name="Владелец",
+        help_text="Укажите владельца поста",
+        blank=True,
+        null=True,
+        on_delete=models.SET_NULL,
+    )  # Владелец публикации
 
     def __str__(self):
         return self.title
