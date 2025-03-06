@@ -1,8 +1,23 @@
 {% extends 'catalog/home.html' %}
 
 {% block content %}
-    <h1>Главная страница</h1>
-    <p>Всего рассылок: {{ mailings_count }}</p>
-    <p>Активных рассылок: {{ active_mailings_count }}</p>
-    <p>Уникальных получателей: {{ unique_clients_count }}</p>
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-5">
+                <div class="card">
+                    <h3 class="card-header text-center">Рассылки</h3>
+                    <div class="card-body">
+                        <p>Всего рассылок: {{ mailings_count }}</p>
+                        <p>Активных рассылок: {{ active_mailings_count }}</p>
+                        <p>Уникальных получателей: {{ unique_clients_count }}</p>
+                        <div class="text-center">
+                            <a href="{% url 'mailing:client_create' %}" class="btn btn-primary">Добавить получателей</a>
+                            <a href="{% url 'mailing:mailing_create' %}" class="btn btn-primary">Создать рассылку</a>
+                            <a href="" class="btn btn-primary">Статистика</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 {% endblock %}

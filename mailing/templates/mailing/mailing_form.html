@@ -1,0 +1,65 @@
+{% extends 'catalog/home.html' %}
+
+{% block content %}
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card">
+                    <h5 class="card-header text-center">Создать новую рассылку</h5>
+                    <div class="card-body">
+                        <form method="post">
+                            {% csrf_token %}
+                            <div class="form-group">
+                                <label for="topic_message">Тема сообщения:</label>
+                                <input type="text" name="topic_message" class="form-control" id="topic_message">
+                            </div>
+                            <div class="form-group">
+                                <label for="text_message">Сообщение:</label>
+                                <textarea name="text_message" class="form-control" id="text_message"></textarea>
+                            </div>
+                            {{ form.as_p }}
+                            <button type="submit" class="btn btn-primary">Сохранить</button>
+                            <a href="{% url 'mailing:index' %}" class="btn btn-outline-dark">Назад</a>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container mt-4">
+        <div class="row justify-content-center">
+            <div class="col-md-10">
+                <h5 class="text-center">Список рассылок</h5>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>№</th>
+                            <th>Тема сообщения</th>
+                            <th>Дата и время первой отправки</th>
+                            <th>Дата и время окончания отправки</th>
+                            <th>Статус</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for mailing in mailings %}
+                        <tr>
+                            <td>{{ forloop.counter }}</td>
+                            <td>{{ mailing.message.topic_message }}</td>
+                            <td>{{ mailing.start_datetime }}</td>
+                            <td>{{ mailing.end_datetime }}</td>
+                            <td>{{ mailing.status }}</td>
+                            <td>
+                                <a class="btn btn-primary" href="{% url 'mailing:mailing_repeat' mailing.pk %}">Повторить отправку</a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

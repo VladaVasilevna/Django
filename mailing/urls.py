@@ -1,14 +1,21 @@
 from django.urls import path
-from .views import ClientCreateView, ClientListView, ClientUpdateView, ClientDeleteView, \
-                  MessageCreateView, MessageListView, MessageUpdateView, MessageDeleteView, \
-                  MailingCreateView, MailingListView, MailingUpdateView, MailingDeleteView, send_mailing
+from .views import ClientCreateView, ClientListView, ClientDeleteView, \
+    MessageCreateView, MessageListView, MessageUpdateView, MessageDeleteView, \
+    MailingCreateView, MailingListView, MailingUpdateView, MailingDeleteView, send_mailing, index, ClientEditView, \
+    ClientSaveView, ClientCancelView
+
+app_name = 'mailing'
 
 urlpatterns = [
-    path('', views.index, name='index'),
+    path('', index, name='index'),
     path('clients/create/', ClientCreateView.as_view(), name='client_create'),
     path('clients/', ClientListView.as_view(), name='client_list'),
-    path('clients/<int:pk>/update/', ClientUpdateView.as_view(), name='client_update'),
     path('clients/<int:pk>/delete/', ClientDeleteView.as_view(), name='client_delete'),
+    path('clients/<int:pk>/edit/', ClientEditView.as_view(), name='client_edit'),
+    path('clients/<int:pk>/save/', ClientSaveView.as_view(), name='client_save'),
+    path('clients/<int:pk>/cancel/', ClientCancelView.as_view(), name='client_cancel'),
+
+
 
     path('messages/create/', MessageCreateView.as_view(), name='message_create'),
     path('messages/', MessageListView.as_view(), name='message_list'),

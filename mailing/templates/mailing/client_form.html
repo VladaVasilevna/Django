@@ -1,0 +1,73 @@
+{% extends 'catalog/home.html' %}
+
+{% block content %}
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-4">
+                <div class="card">
+                    <h5 class="card-header text-center">Добавить получателя</h5>
+                    <div class="card-body">
+                        <form method="post">
+                            {% csrf_token %}
+                            {{ form.as_p }}
+                            <button type="submit" class="btn btn-primary">Сохранить</button>
+                            <a href="{% url 'mailing:index' %}" class="btn btn-outline-dark">Назад</a>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container mt-4">
+        <div class="row justify-content-center">
+            <div class="col-md-10">
+                <h5 class="text-center">Список получателей рассылки</h5>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>№</th>
+                            <th>ФИО</th>
+                            <th>Email</th>
+                            <th>Комментарий</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for client in clients %}
+                        <tr>
+                            {% if client.pk == editing_client %}
+                                <form id="edit-form" method="post" action="{% url 'mailing:client_save' client.pk %}" style="display: contents;">
+                                    {% csrf_token %}
+                                    <td>{{ forloop.counter }}</td>
+                                    <td><input type="text" name="full_name" value="{{ client.full_name }}" class="form-control"></td>
+                                    <td><input type="email" name="email" value="{{ client.email }}" class="form-control"></td>
+                                    <td><input type="text" name="comment" value="{{ client.comment }}" class="form-control"></td>
+                                    <td>
+                                        <button class="btn btn-primary" type="submit">Сохранить</button>
+                                        <a class="btn btn-secondary" href="{% url 'mailing:client_cancel' client.pk %}" style="margin-left: 5px;">Отмена</a>
+                                    </td>
+                                </form>
+                            {% else %}
+                                <td>{{ forloop.counter }}</td>
+                                <td>{{ client.full_name }}</td>
+                                <td>{{ client.email }}</td>
+                                <td>{{ client.comment }}</td>
+                                <td>
+                                    <a class="btn btn-primary" href="{% url 'mailing:client_edit' client.pk %}" style="margin-right: 5px;">Редактировать</a>
+                                    <form action="{% url 'mailing:client_delete' client.pk %}" method="post" onsubmit="return confirm('Вы уверены, что хотите безвозвратно удалить {{ client.full_name }}?')" style="display: inline-block;">
+                                        {% csrf_token %}
+                                        <button class="btn btn-danger" type="submit">Удалить</button>
+                                    </form>
+                                </td>
+                            {% endif %}
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
