@@ -9,7 +9,6 @@ urlpatterns = [
     path('', HomeView.as_view(), name='home'),
     path('', include('catalog.urls', namespace='catalog')),
     path('blog/', include('blog.urls', namespace='blog')),
-    path('newsletter/', include('newsletter.urls', namespace='newsletter')),
     path('users/', include('users.urls', namespace='users')),
     path('mailing/', include('mailing.urls')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

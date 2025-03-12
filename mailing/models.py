@@ -10,12 +10,20 @@ class Client(models.Model):
     def __str__(self):
         return self.email
 
+    class Meta:
+        verbose_name = "Получатель"
+        verbose_name_plural = "Получатели"
+
 class Message(models.Model):
     topic_message = models.CharField(max_length=200, verbose_name="Тема сообщения")
     text_message = models.TextField(default="",verbose_name="Сообщение")
 
     def __str__(self):
         return self.topic_message
+
+    class Meta:
+        verbose_name = "Сообщение"
+        verbose_name_plural = "Сообщения"
 
 class Mailing(models.Model):
     message = models.ForeignKey(Message, on_delete=models.CASCADE, verbose_name="Сообщение")
@@ -27,6 +35,10 @@ class Mailing(models.Model):
     def __str__(self):
         return f"{self.message.topic_message} ({self.status})"
 
+    class Meta:
+        verbose_name = "Рассылка"
+        verbose_name_plural = "Рассылки"
+
 class Attempt(models.Model):
     attempt_time = models.DateTimeField(default=timezone.now, verbose_name="Дата и время попытки")
     status = models.CharField(max_length=10, choices=[('success', 'Успешно'), ('failed', 'Не успешно')], verbose_name="Статус")
@@ -35,3 +47,7 @@ class Attempt(models.Model):
 
     def __str__(self):
         return f"{self.mailing.message.subject} ({self.status})"
+
+    class Meta:
+        verbose_name = "Статус рассылки"
+        verbose_name_plural = "Статусы рассылок"

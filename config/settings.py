@@ -22,7 +22,6 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'catalog',
     'blog',
-    'newsletter',
     'users',
     'mailing',
 ]
@@ -125,3 +124,5 @@ if CACHE_ENABLED:
             'LOCATION': os.getenv('LOCATION'),
         }
     }
+
+CRISPY_TEMPLATE_PACK = 'bootstrap5'
