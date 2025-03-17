@@ -1,6 +1,7 @@
 from django.db import models
 from django.utils import timezone
 
+
 class Client(models.Model):
     email = models.EmailField(unique=True, verbose_name="Email")
     full_name = models.CharField(max_length=200, verbose_name="Ф. И. О.")
@@ -25,12 +26,27 @@ class Message(models.Model):
         verbose_name = "Сообщение"
         verbose_name_plural = "Сообщения"
 
+
 class Mailing(models.Model):
+    REPEAT_CHOICES = [
+        ('once', 'Один раз'),
+        ('daily', 'Ежедневно'),
+        ('weekly', '1 раз в неделю'),
+        ('monthly', '1 раз в месяц'),
+        ('yearly', '1 раз в год'),
+    ]
+
     message = models.ForeignKey(Message, on_delete=models.CASCADE, verbose_name="Сообщение")
     clients = models.ManyToManyField(Client, verbose_name="Получатели")
+    repeat = models.CharField(max_length=20, choices=REPEAT_CHOICES, default='once', verbose_name="Повторяемость")
     start_datetime = models.DateTimeField(verbose_name="Дата и время первой отправки")
-    end_datetime = models.DateTimeField(verbose_name="Дата и время окончания отправки")
-    status = models.CharField(max_length=20, default="Создана", verbose_name="Статус")
+    end_date = models.DateField(verbose_name="Дата окончания рассылки", blank=True, null=True)
+    status = models.CharField(
+        max_length=20,
+        choices=[('Создана', 'Создана'), ('Запущена', 'Запущена'), ('Завершена', 'Завершена')],
+        default='Создана',
+        verbose_name="Статус"
+    )
 
     def __str__(self):
         return f"{self.message.topic_message} ({self.status})"
@@ -38,16 +54,3 @@ class Mailing(models.Model):
     class Meta:
         verbose_name = "Рассылка"
         verbose_name_plural = "Рассылки"
-
-class Attempt(models.Model):
-    attempt_time = models.DateTimeField(default=timezone.now, verbose_name="Дата и время попытки")
-    status = models.CharField(max_length=10, choices=[('success', 'Успешно'), ('failed', 'Не успешно')], verbose_name="Статус")
-    response = models.TextField(blank=True, null=True, verbose_name="Ответ почтового сервера")
-    mailing = models.ForeignKey(Mailing, on_delete=models.CASCADE, verbose_name="Рассылка")
-
-    def __str__(self):
-        return f"{self.mailing.message.subject} ({self.status})"
-
-    class Meta:
-        verbose_name = "Статус рассылки"
-        verbose_name_plural = "Статусы рассылок"

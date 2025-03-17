@@ -1,11 +1,13 @@
-from django.http import HttpResponseForbidden
+from django.conf import settings
 from django.shortcuts import render, redirect
 from django.views import View
 from django.views.generic import CreateView, ListView, UpdateView, DeleteView
-from .models import Client, Message, Mailing, Attempt
+from .models import Client, Message, Mailing
 from .forms import ClientForm, MessageForm, MailingForm
 from django.core.mail import send_mail
-from django.conf import settings
+from django.utils import timezone
+from django.shortcuts import get_object_or_404
+
 
 class ClientCreateView(View):
     def get(self, request):
@@ -52,14 +54,42 @@ class ClientDeleteView(DeleteView):
     model = Client
     success_url = '/mailing/clients/create/'
 
-class MessageCreateView(CreateView):
-    model = Message
-    form_class = MessageForm
-    success_url = '/mailing/messages/'
 
-class MessageListView(ListView):
-    model = Message
-    queryset = Message.objects.all()
+class MessageCreateView(View):
+    def get(self, request):
+        form = MessageForm()
+        messages = Message.objects.all().order_by('id')
+        editing_message = request.session.get('editing_message', None)
+        return render(request, 'mailing/text_form.html', {'form': form, 'messages': messages, 'editing_message': editing_message})
+
+    def post(self, request):
+        form = MessageForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect(request.path)
+        messages = Message.objects.all().order_by('id')
+        editing_message = request.session.get('editing_message', None)
+        return render(request, 'mailing/text_form.html', {'form': form, 'messages': messages, 'editing_message': editing_message})
+
+
+class MessageEditView(View):
+    def get(self, request, pk):
+        request.session['editing_message'] = pk
+        return redirect('/mailing/messages/create/')
+
+class MessageSaveView(View):
+    def post(self, request, pk):
+        message = Message.objects.get(pk=pk)
+        message.topic_message = request.POST.get('topic_message', message.topic_message)
+        message.text_message = request.POST.get('text_message', message.text_message)
+        message.save()
+        request.session['editing_message'] = None
+        return redirect('/mailing/messages/create/')
+
+class MessageCancelView(View):
+    def get(self, request, pk):
+        request.session['editing_message'] = None
+        return redirect('/mailing/messages/create/')
 
 class MessageUpdateView(UpdateView):
     model = Message
@@ -68,72 +98,79 @@ class MessageUpdateView(UpdateView):
 
 class MessageDeleteView(DeleteView):
     model = Message
-    success_url = '/mailing/messages/'
+    success_url = '/mailing/messages/create/'  # Перенаправляем на страницу с формой
 
-class MailingCreateView(View):
-    def get(self, request):
-        form = MailingForm()
-        return render(request, 'mailing/mailing_form.html', {'form': form})
 
-    def post(self, request):
-        form = MailingForm(request.POST)
-        if form.is_valid():
-            mailing = form.save(commit=False)
-            mailing.status = "Создана"
-            mailing.save()
-            form.save_m2m()  # Сохраняем многие-ко-многим отношения
-            return redirect('/mailing/mailings/')
-        return render(request, 'mailing/mailing_form.html', {'form': form})
+def index(request):
+    clients_count = Client.objects.count()
+    messages_count = Message.objects.count()
+
+    context = {
+        'clients_count': clients_count,
+        'messages_count': messages_count,
+    }
+
+    return render(request, 'mailing/index.html', context)
+
+
+class MailingCreateView(CreateView):
+    model = Mailing
+    form_class = MailingForm
+    template_name = 'mailing/mailing_form.html'
+    success_url = '/mailing/mailings/'  # Перенаправляем на список рассылок
+
+    def form_valid(self, form):
+        mailing = form.save(commit=False)
+        mailing.status = "Создана"
+        mailing.save()
+        form.save_m2m()  # Сохраняем многие-ко-многим отношения
+        return super().form_valid(form)
 
 class MailingListView(ListView):
     model = Mailing
-    queryset = Mailing.objects.all()
-    template_name = 'mailing/mailing_form.html'
-
-class MailingRepeatView(View):
-    def get(self, request, pk):
-        mailing = Mailing.objects.get(pk=pk)
-        # Логика повторной отправки рассылки
-        return redirect('/mailing/mailings/')
+    template_name = 'mailing/mailing_list.html'
 
 class MailingUpdateView(UpdateView):
     model = Mailing
     form_class = MailingForm
+    template_name = 'mailing/mailing_form.html'
     success_url = '/mailing/mailings/'
 
 class MailingDeleteView(DeleteView):
     model = Mailing
     success_url = '/mailing/mailings/'
 
-def index(request):
-    mailings_count = Mailing.objects.count()
-    active_mailings_count = Mailing.objects.filter(status='started').count()
-    unique_clients_count = Client.objects.count()
 
-    context = {
-        'mailings_count': mailings_count,
-        'active_mailings_count': active_mailings_count,
-        'unique_clients_count': unique_clients_count,
-    }
+def send_mailing(mailing_id):
+    mailing = Mailing.objects.get(pk=mailing_id)
 
-    return render(request, 'mailing/index.html', context)
-
-
-def send_mailing(request, pk):
-    # Проверка прав доступа
-    if not request.user.is_staff:
-        return HttpResponseForbidden("Доступ запрещен")
-
-    mailing = Mailing.objects.get(pk=pk)
+    # Логика отправки рассылки
     for client in mailing.clients.all():
-        try:
+        send_mail(
+            subject=mailing.message.topic_message,
+            message=mailing.message.text_message,
+            from_email='your_email@example.com',  # Замените на ваш email
+            recipient_list=[client.email],
+        )
+
+    # Обновление статуса рассылки
+    if mailing.end_date and mailing.end_date < timezone.now().date():
+        mailing.status = 'Завершена'
+        mailing.save()
+
+
+def send_mailing_post(request, pk):
+    if request.method == 'POST':
+        mailing = get_object_or_404(Mailing, pk=pk)
+        # Логика отправки рассылки
+        for client in mailing.clients.all():
             send_mail(
-                subject=mailing.message.subject,
-                message=mailing.message.body,
+                subject=mailing.message.topic_message,
+                message=mailing.message.text_message,
                 from_email=settings.EMAIL_HOST_USER,
                 recipient_list=[client.email],
             )
-            Attempt.objects.create(mailing=mailing, status='success')
-        except Exception as e:
-            Attempt.objects.create(mailing=mailing, status='failed', response=str(e))
+        mailing.status = 'Запущена'
+        mailing.save()
+        return redirect('/mailing/mailings/')
     return redirect('/mailing/mailings/')

@@ -11,8 +11,9 @@
                         <p>Активных рассылок: {{ active_mailings_count }}</p>
                         <p>Уникальных получателей: {{ unique_clients_count }}</p>
                         <div class="text-center">
-                            <a href="{% url 'mailing:client_create' %}" class="btn btn-primary">Добавить получателей</a>
-                            <a href="{% url 'mailing:mailing_create' %}" class="btn btn-primary">Создать рассылку</a>
+                            <a href="{% url 'mailing:client_create' %}" class="btn btn-primary">Список получателей</a>
+                            <a href="{% url 'mailing:message_create' %}" class="btn btn-primary">Создать сообщение</a>
+                            <a href="{% url 'mailing:mailing_list' %}" class="btn btn-primary">Список рассылок</a>
                             <a href="" class="btn btn-primary">Статистика</a>
                         </div>
                     </div>

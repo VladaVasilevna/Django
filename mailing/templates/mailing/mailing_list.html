@@ -1,0 +1,50 @@
+{% extends 'catalog/home.html' %}
+
+{% block content %}
+<div class="container">
+    <h3 class="text-center">Список рассылок</h3>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>№</th>
+                <th>Сообщение</th>
+                <th>Получатели</th>
+                <th>Дата начала</th>
+                <th>Дата окончания</th>
+                <th>Статус</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for mailing in object_list %}
+            <tr>
+                <td>{{ forloop.counter }}</td>
+                <td>{{ mailing.message.topic_message }}</td>
+                <td>
+                    {% for client in mailing.clients.all %}
+                        {{ client.email }}<br>
+                    {% endfor %}
+                </td>
+                <td>{{ mailing.start_datetime }}</td>
+                <td>{{ mailing.end_datetime }}</td>
+                <td>{{ mailing.status }}</td>
+                <td>
+                    <form action="{% url 'mailing:send_mailing' mailing.pk %}" method="post" style="display:inline-block;">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-outline-success">Отправить</button>
+                    </form>
+                    <a href="{% url 'mailing:mailing_update' mailing.pk %}" class="btn btn-outline-primary">Редактировать</a>
+                    <form action="{% url 'mailing:mailing_delete' mailing.pk %}" method="post" onsubmit="return confirm('Вы уверены, что хотите безвозвратно удалить {{ message.topic_message }}?')" style="display:inline-block;">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-outline-danger">Удалить</button>
+                    </form>
+                </td>
+
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <a href="{% url 'mailing:mailing_create' %}" class="btn btn-success mt-3">Создать новую рассылку</a>
+    <a href="{% url 'mailing:index' %}" class="btn btn-dark mt-3">Назад</a>
+</div>
+{% endblock %}

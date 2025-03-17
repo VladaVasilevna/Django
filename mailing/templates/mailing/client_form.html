@@ -1,27 +1,9 @@
 {% extends 'catalog/home.html' %}
 
 {% block content %}
-    <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-md-4">
-                <div class="card">
-                    <h5 class="card-header text-center">Добавить получателя</h5>
-                    <div class="card-body">
-                        <form method="post">
-                            {% csrf_token %}
-                            {{ form.as_p }}
-                            <button type="submit" class="btn btn-primary">Сохранить</button>
-                            <a href="{% url 'mailing:index' %}" class="btn btn-outline-dark">Назад</a>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="container mt-4">
-        <div class="row justify-content-center">
-            <div class="col-md-10">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-9">
                 <h5 class="text-center">Список получателей рассылки</h5>
                 <table class="table">
                     <thead>
@@ -54,10 +36,10 @@
                                 <td>{{ client.email }}</td>
                                 <td>{{ client.comment }}</td>
                                 <td>
-                                    <a class="btn btn-primary" href="{% url 'mailing:client_edit' client.pk %}" style="margin-right: 5px;">Редактировать</a>
+                                    <a class="btn btn-outline-primary" href="{% url 'mailing:client_edit' client.pk %}" style="margin-right: 5px;">Редактировать</a>
                                     <form action="{% url 'mailing:client_delete' client.pk %}" method="post" onsubmit="return confirm('Вы уверены, что хотите безвозвратно удалить {{ client.full_name }}?')" style="display: inline-block;">
                                         {% csrf_token %}
-                                        <button class="btn btn-danger" type="submit">Удалить</button>
+                                        <button class="btn btn-outline-danger" type="submit">Удалить</button>
                                     </form>
                                 </td>
                             {% endif %}
@@ -65,9 +47,21 @@
                         {% endfor %}
                     </tbody>
                 </table>
+            </div>
 
+            <div class="col-md-3">
+                <div class="card">
+                    <h5 class="card-header text-center">Добавить получателя</h5>
+                    <div class="card-body">
+                        <form method="post">
+                            {% csrf_token %}
+                            {{ form.as_p }}
+                            <button type="submit" class="btn btn-primary">Сохранить</button>
+                            <a href="{% url 'mailing:index' %}" class="btn btn-dark">Назад</a>
+                        </form>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
-
 {% endblock %}
