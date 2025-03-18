@@ -7,6 +7,7 @@ from .forms import ClientForm, MessageForm, MailingForm
 from django.core.mail import send_mail
 from django.utils import timezone
 from django.shortcuts import get_object_or_404
+from datetime import datetime
 
 
 class ClientCreateView(View):
@@ -123,8 +124,17 @@ class MailingCreateView(CreateView):
     def form_valid(self, form):
         mailing = form.save(commit=False)
         mailing.status = "Создана"
+
+        if mailing.repeat == 'once':
+            mailing.end_datetime = mailing.start_datetime
+        else:
+            # Присвоение времени из даты начала
+            mailing.end_datetime = datetime.datetime.combine(
+                mailing.end_datetime.date(),
+                mailing.start_datetime.time()
+            )
         mailing.save()
-        form.save_m2m()  # Сохраняем многие-ко-многим отношения
+        form.save_m2m()
         return super().form_valid(form)
 
 class MailingListView(ListView):

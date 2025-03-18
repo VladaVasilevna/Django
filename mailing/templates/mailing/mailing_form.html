@@ -16,24 +16,36 @@
                             {{ form.as_p }}
                             <script>
                                 document.addEventListener('DOMContentLoaded', function() {
-                                    const repeatSelect = document.getElementById('id_repeat');
-                                    const endDateInput = document.getElementById('id_end_datetime');
+                                const repeatSelect = document.getElementById('id_repeat');
+                                const endDateInput = document.getElementById('id_end_datetime');
+                                const endDateLabel = document.querySelector('label[for="id_end_datetime"]');
+                                const startInput = document.getElementById('id_start_datetime');
 
-                                    repeatSelect.addEventListener('change', function() {
-                                        if (this.value === 'once') {
-                                            endDateInput.disabled = true;
-                                            endDateInput.value = document.getElementById('id_start_datetime').value;
-                                        } else {
-                                            endDateInput.disabled = false;
+                                // Скрытие/показ поля
+                                repeatSelect.addEventListener('change', function() {
+                                    if (this.value === 'once') {
+                                        endDateInput.style.display = 'none';
+                                        endDateLabel.style.display = 'none';
+                                        endDateInput.value = startInput.value; // Автоматическое присвоение
+                                    } else {
+                                        endDateInput.style.display = 'block';
+                                        endDateLabel.style.display = 'block';
+                                        endDateInput.value = ''; // Очистка значения
+                                    }
+                                });
+
+                                // Проверка при изменении даты окончания
+                                endDateInput.addEventListener('change', function() {
+                                    if (repeatSelect.value !== 'once') {
+                                        const startDate = new Date(startInput.value);
+                                        const endDate = new Date(this.value);
+                                        if (endDate < startDate) {
+                                            alert('Дата окончания не может быть раньше даты первой отправки!');
+                                            this.value = startInput.value; // Автоматическая коррекция
+                                            }
                                         }
                                     });
-
-                                    // Блокируем поле по умолчанию
-                                    if (repeatSelect.value === 'once') {
-                                        endDateInput.disabled = true;
-                                        endDateInput.value = document.getElementById('id_start_datetime').value;
-                                        }
-                                    });
+                                });
                                 </script>
 
                             <div class="d-grid">

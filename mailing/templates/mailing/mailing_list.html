@@ -32,8 +32,8 @@
                         {{ client.email }}<br>
                     {% endfor %}
                 </td>
-                <td>{{ mailing.start_datetime }}</td>
-                <td>{{ mailing.end_datetime }}</td>
+                <td>{{ mailing.start_datetime|date:"d.m.Y H:i" }}</td>
+                <td>{{ mailing.end_datetime|date:"d.m.Y H:i" }}</td>
                 <td>{{ mailing.status }}</td>
                 <td>
                     <form action="{% url 'mailing:send_mailing' mailing.pk %}" method="post" style="display:inline-block;">

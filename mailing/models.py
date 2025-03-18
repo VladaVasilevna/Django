@@ -1,5 +1,5 @@
+from django.core.exceptions import ValidationError
 from django.db import models
-from django.utils import timezone
 
 
 class Client(models.Model):
@@ -47,6 +47,11 @@ class Mailing(models.Model):
         default='Создана',
         verbose_name="Статус"
     )
+
+    def clean(self):
+        if self.repeat != 'once' and self.end_datetime < self.start_datetime:
+            raise ValidationError('Дата окончания не может быть раньше даты первой отправки')
+
 
     def __str__(self):
         return f"{self.message.topic_message} ({self.status})"
