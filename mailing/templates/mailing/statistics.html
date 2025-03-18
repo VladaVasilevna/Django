@@ -1,0 +1,64 @@
+{% extends 'catalog/home.html' %}
+
+{% block content %}
+<div class="container">
+    <div class="row align-items mb-3">
+        <div class="col-auto">
+            <a href="{% url 'mailing:mailing_list' %}" class="btn btn-dark">← Назад</a>
+        </div>
+        <div class="col">
+            <div class="card">
+                <h5 class="card-header text-center">Статистика рассылок</h5>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6>Общая статистика:</h6>
+                            <div class="stat-card">
+                                <div class="stat-item">
+                                    <h5>Успешные попытки:</h5>
+                                    <p class="stat-value">{{ successful_attempts }}</p>
+                                </div>
+                                <div class="stat-item">
+                                    <h5>Неуспешные попытки:</h5>
+                                    <p class="stat-value">{{ failed_attempts }}</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <h6>Последние попытки:</h6>
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>Рассылка</th>
+                                            <th>Получатель</th>
+                                            <th>Дата</th>
+                                            <th>Статус</th>
+                                            <th>Ответ</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for attempt in last_attempts %}
+                                        <tr>
+                                            <td>{{ attempt.mailing.message.topic_message }}</td>
+                                            <td>{{ attempt.client.email }}</td>
+                                            <td>{{ attempt.attempt_datetime }}</td>
+                                            <td class="text-{{ attempt.status|lower }}">{{ attempt.status }}</td>
+                                            <td>{{ attempt.server_response }}</td>
+                                        </tr>
+                                        {% empty %}
+                                        <tr>
+                                            <td colspan="5" class="text-center">Нет попыток</td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

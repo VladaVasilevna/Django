@@ -1,0 +1,61 @@
+{% extends 'catalog/home.html' %}
+
+{% block content %}
+<div class="container">
+    <div class="row align-items mb-3">
+        <div class="col-auto">
+            <a href="{% url 'mailing:mailing_list' %}" class="btn btn-dark">← Назад</a>
+        </div>
+        <div class="col">
+            <div class="d-flex justify-content-center">
+                <div class="card col-md-5">
+                    <h5 class="card-header text-center">Создать рассылку</h5>
+                    <div class="card-body">
+                        <form method="post">
+                            {% csrf_token %}
+                            {{ form.as_p }}
+                            <script>
+                                document.addEventListener('DOMContentLoaded', function() {
+                                const repeatSelect = document.getElementById('id_repeat');
+                                const endDateInput = document.getElementById('id_end_datetime');
+                                const endDateLabel = document.querySelector('label[for="id_end_datetime"]');
+                                const startInput = document.getElementById('id_start_datetime');
+
+                                // Скрытие/показ поля
+                                repeatSelect.addEventListener('change', function() {
+                                    if (this.value === 'once') {
+                                        endDateInput.style.display = 'none';
+                                        endDateLabel.style.display = 'none';
+                                        endDateInput.value = startInput.value; // Автоматическое присвоение
+                                    } else {
+                                        endDateInput.style.display = 'block';
+                                        endDateLabel.style.display = 'block';
+                                        endDateInput.value = ''; // Очистка значения
+                                    }
+                                });
+
+                                // Проверка при изменении даты окончания
+                                endDateInput.addEventListener('change', function() {
+                                    if (repeatSelect.value !== 'once') {
+                                        const startDate = new Date(startInput.value);
+                                        const endDate = new Date(this.value);
+                                        if (endDate < startDate) {
+                                            alert('Дата окончания не может быть раньше даты первой отправки!');
+                                            this.value = startInput.value; // Автоматическая коррекция
+                                            }
+                                        }
+                                    });
+                                });
+                                </script>
+
+                            <div class="d-grid">
+                                <button type="submit" class="btn btn-primary">Сохранить</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
