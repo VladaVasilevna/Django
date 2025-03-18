@@ -21,16 +21,16 @@ class MessageForm(forms.ModelForm):
 class MailingForm(forms.ModelForm):
     class Meta:
         model = Mailing
-        fields = ('message', 'clients', 'repeat', 'start_datetime', 'end_date')
+        fields = ('message', 'clients', 'repeat', 'start_datetime', 'end_datetime')
         labels = {
             'message': 'Сообщение',
             'clients': 'Получатели',
-            'repeat': 'Повторяемость отправки',
-            'start_datetime': 'Дата и время первой отправки',
-            'end_datetime': 'Дата и время окончания отправки',
+            'repeat': 'Периодичность отправки',
+            'start_datetime': 'Дата и время первой рассылки',
+            'end_datetime': 'Дата и время окончания рассылки',
         }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['start_datetime'].widget = forms.DateTimeInput(attrs={'type': 'datetime-local'})
-        self.fields['end_date'].widget = forms.DateInput(attrs={'type': 'date'})
+        self.fields['end_datetime'].widget = forms.DateTimeInput(attrs={'type': 'datetime-local'})

@@ -38,9 +38,9 @@ class Mailing(models.Model):
 
     message = models.ForeignKey(Message, on_delete=models.CASCADE, verbose_name="Сообщение")
     clients = models.ManyToManyField(Client, verbose_name="Получатели")
-    repeat = models.CharField(max_length=20, choices=REPEAT_CHOICES, default='once', verbose_name="Повторяемость")
+    repeat = models.CharField(max_length=20, choices=REPEAT_CHOICES, default='once', verbose_name="Периодичность")
     start_datetime = models.DateTimeField(verbose_name="Дата и время первой отправки")
-    end_date = models.DateField(verbose_name="Дата окончания рассылки", blank=True, null=True)
+    end_datetime = models.DateTimeField(verbose_name="Дата окончания рассылки", blank=True, null=True)
     status = models.CharField(
         max_length=20,
         choices=[('Создана', 'Создана'), ('Запущена', 'Запущена'), ('Завершена', 'Завершена')],
@@ -54,3 +54,23 @@ class Mailing(models.Model):
     class Meta:
         verbose_name = "Рассылка"
         verbose_name_plural = "Рассылки"
+
+
+class Attempt(models.Model):
+    STATUS_CHOICES = [
+        ('success', 'Успешно'),
+        ('failed', 'Не успешно'),
+    ]
+
+    mailing = models.ForeignKey(Mailing, on_delete=models.CASCADE, verbose_name="Рассылка")
+    client = models.ForeignKey(Client, on_delete=models.CASCADE, verbose_name="Получатель")
+    attempt_datetime = models.DateTimeField(auto_now_add=True, verbose_name="Дата и время попытки")
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, verbose_name="Статус")
+    server_response = models.TextField(blank=True, verbose_name="Ответ почтового сервера")
+
+    def __str__(self):
+        return f"{self.mailing.message.topic_message} ({self.client.email})"
+
+    class Meta:
+        verbose_name = "Попытка рассылки"
+        verbose_name_plural = "Попытки рассылок"

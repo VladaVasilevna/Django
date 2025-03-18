@@ -2,7 +2,7 @@ from django.conf import settings
 from django.shortcuts import render, redirect
 from django.views import View
 from django.views.generic import CreateView, ListView, UpdateView, DeleteView
-from .models import Client, Message, Mailing
+from .models import Client, Message, Mailing, Attempt
 from .forms import ClientForm, MessageForm, MailingForm
 from django.core.mail import send_mail
 from django.utils import timezone
@@ -103,13 +103,14 @@ class MessageDeleteView(DeleteView):
 
 def index(request):
     clients_count = Client.objects.count()
-    messages_count = Message.objects.count()
+    mailings_count = Mailing.objects.count()
+    active_mailings = Mailing.objects.filter(status='Запущена').count()
 
     context = {
         'clients_count': clients_count,
-        'messages_count': messages_count,
+        'mailings_count': mailings_count,
+        'active_mailings': active_mailings,
     }
-
     return render(request, 'mailing/index.html', context)
 
 
@@ -141,36 +142,59 @@ class MailingDeleteView(DeleteView):
     success_url = '/mailing/mailings/'
 
 
-def send_mailing(mailing_id):
-    mailing = Mailing.objects.get(pk=mailing_id)
-
-    # Логика отправки рассылки
-    for client in mailing.clients.all():
-        send_mail(
-            subject=mailing.message.topic_message,
-            message=mailing.message.text_message,
-            from_email='your_email@example.com',  # Замените на ваш email
-            recipient_list=[client.email],
-        )
-
-    # Обновление статуса рассылки
-    if mailing.end_date and mailing.end_date < timezone.now().date():
-        mailing.status = 'Завершена'
-        mailing.save()
-
-
 def send_mailing_post(request, pk):
     if request.method == 'POST':
         mailing = get_object_or_404(Mailing, pk=pk)
-        # Логика отправки рассылки
-        for client in mailing.clients.all():
-            send_mail(
-                subject=mailing.message.topic_message,
-                message=mailing.message.text_message,
-                from_email=settings.EMAIL_HOST_USER,
-                recipient_list=[client.email],
-            )
+
         mailing.status = 'Запущена'
         mailing.save()
+
+        # Отправка рассылки с сохранением попыток
+        for client in mailing.clients.all():
+            try:
+                send_mail(
+                    subject=mailing.message.topic_message,
+                    message=mailing.message.text_message,
+                    from_email=settings.EMAIL_HOST_USER,
+                    recipient_list=[client.email],
+                )
+                Attempt.objects.create(
+                    mailing=mailing,
+                    client=client,
+                    status='success',
+                    server_response='Успешно'
+                )
+            except Exception as e:
+                Attempt.objects.create(
+                    mailing=mailing,
+                    client=client,
+                    status='failed',
+                    server_response=str(e)
+                )
+
+        # Проверка статуса рассылки
+        if mailing.repeat == 'once':
+            if mailing.start_datetime < timezone.now():
+                mailing.status = 'Завершена'
+                mailing.save()
+        else:
+            if mailing.end_datetime is not None and mailing.end_datetime < timezone.now():
+                mailing.status = 'Завершена'
+                mailing.save()
+
         return redirect('/mailing/mailings/')
     return redirect('/mailing/mailings/')
+
+
+class StatisticsView(View):
+    def get(self, request):
+        successful_attempts = Attempt.objects.filter(status='success').count()
+        failed_attempts = Attempt.objects.filter(status='failed').count()
+        last_attempts = Attempt.objects.order_by('-attempt_datetime')[:10]
+
+        context = {
+            'successful_attempts': successful_attempts,
+            'failed_attempts': failed_attempts,
+            'last_attempts': last_attempts,
+        }
+        return render(request, 'mailing/statistics.html', context)

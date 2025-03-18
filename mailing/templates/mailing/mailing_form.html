@@ -2,37 +2,45 @@
 
 {% block content %}
 <div class="container">
-    <div class="row justify-content-center">
-        <div class="col-md-6">
-            <div class="card">
-                <h5 class="card-header text-center">Создать рассылку</h5>
-                <div class="card-body">
-                    <form method="post">
-                        {% csrf_token %}
-                        {{ form.as_p }}
-                        <script>
-                            document.addEventListener('DOMContentLoaded', function() {
-                                const repeatSelect = document.getElementById('id_repeat');
-                                const startDateTimeInput = document.getElementById('id_start_datetime');
-                                const endDateInput = document.getElementById('id_end_date');
+    <div class="row align-items mb-3">
+        <div class="col-auto">
+            <a href="{% url 'mailing:mailing_list' %}" class="btn btn-dark">← Назад</a>
+        </div>
+        <div class="col">
+            <div class="d-flex justify-content-center">
+                <div class="card col-md-5">
+                    <h5 class="card-header text-center">Создать рассылку</h5>
+                    <div class="card-body">
+                        <form method="post">
+                            {% csrf_token %}
+                            {{ form.as_p }}
+                            <script>
+                                document.addEventListener('DOMContentLoaded', function() {
+                                    const repeatSelect = document.getElementById('id_repeat');
+                                    const endDateInput = document.getElementById('id_end_datetime');
 
-                                repeatSelect.addEventListener('change', function() {
-                                    if (this.value === 'once') {
+                                    repeatSelect.addEventListener('change', function() {
+                                        if (this.value === 'once') {
+                                            endDateInput.disabled = true;
+                                            endDateInput.value = document.getElementById('id_start_datetime').value;
+                                        } else {
+                                            endDateInput.disabled = false;
+                                        }
+                                    });
+
+                                    // Блокируем поле по умолчанию
+                                    if (repeatSelect.value === 'once') {
                                         endDateInput.disabled = true;
-                                    } else {
-                                        endDateInput.disabled = false;
-                                    }
-                                });
+                                        endDateInput.value = document.getElementById('id_start_datetime').value;
+                                        }
+                                    });
+                                </script>
 
-                                // Блокируем поля по умолчанию
-                                if (repeatSelect.value === 'once') {
-                                    endDateInput.disabled = true;
-                                }
-                            });
-                        </script>
-                        <button type="submit" class="btn btn-primary">Сохранить</button>
-                        <a href="{% url 'mailing:mailing_list' %}" class="btn btn-dark">Назад</a>
-                    </form>
+                            <div class="d-grid">
+                                <button type="submit" class="btn btn-primary">Сохранить</button>
+                            </div>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
