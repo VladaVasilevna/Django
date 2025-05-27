@@ -1,0 +1,33 @@
+{% extends "blog/base.html" %}
+{% load blog_tags %}
+{% block content %}
+<div class="container mb-5">
+    <div class="text-center mb-4">
+        <h1 class="my-0 font-weight-normal">{{ post.title }}</h1>
+    </div>
+
+    <div class="text-center mb-4">
+        <img src="{{ post.preview_image.url }}" class="img-fluid shadow" alt="{{ post.title }}" style="max-height: 500px; object-fit: contain;">
+    </div>
+
+    <div class="mb-4" style="text-align: justify;">
+        <p class="fs-5">{{ post.content|linebreaks }}</p>
+    </div>
+
+    <div class="text-body-secondary d-flex justify-content-between mb-4">
+        <p>Дата публикации: {{ post.created_at|date:"d F Y H:i" }}</p>
+        <p>Количество просмотров: {{ post.views_count }}</p>
+    </div>
+
+    <div class="d-flex justify-content-between mb-3">
+        {% if perms.blog.can_edit_content and perms.blog.can_edit_is_published or user == post.owner %}
+        <div>
+            <a href="{% url 'blog:post_edit' post.pk %}" class="btn btn-lg btn-outline-dark me-3">Редактировать</a>
+            <a href="{% url 'blog:post_delete' post.pk %}" class="btn btn-lg btn-outline-danger">Удалить</a>
+        </div>
+        {% endif %}
+        <a href="{% url 'blog:all_posts' %}" class="btn btn-lg btn-outline-dark">Назад</a>
+    </div>
+
+</div>
+{% endblock %}

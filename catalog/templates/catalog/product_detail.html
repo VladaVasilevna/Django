@@ -1,0 +1,39 @@
+{% extends 'catalog/home.html' %}
+{% load my_tags %}
+{% block content %}
+<div class="container mb-5 mt-5">
+    <div class="row text-center">
+        <div class="col-md-6">
+            <img src="{{ product.image | media_filter }}" class="img-fluid shadow" alt="{{ product.name }}" style="max-height: 500px; object-fit: contain;">
+        </div>
+        <div class="col-md-6 text-left d-flex flex-column justify-content-start">
+            <h1 class="my-0 font-weight-normal mb-3">{{ object.name }}</h1>
+            <p class="fs-5 mb-3" style="text-align: justify;">{{ object.description }}</p>
+            <div class="d-flex justify-content-end align-items-center mb-3">
+
+                <h1 class="card-title pricing-card-title me-2">Цена: {{ object.price }} ₽</h1>
+            </div>
+            <div class="d-flex justify-content-end align-items-center mb-3">
+                <button type="button" class="btn btn-lg btn-outline-primary me-2">Купить</button>
+                <a href="{% url 'catalog:home' %}" class="btn btn-lg btn-block btn-outline-primary">Назад</a>
+            </div>
+
+            {% if perms.catalog.can_edit_category and perms.catalog.can_edit_description or user == product.owner %}
+            <div class="d-flex justify-content-end align-items-center mt-auto">
+                <a href="{% url 'catalog:update_product' product.pk %}" class="btn btn-lg btn-block btn-outline-primary me-2">Редактировать</a>
+                <a href="{% url 'catalog:delete_product' product.pk %}" class="btn btn-lg btn-block btn-outline-danger">Удалить</a>
+            </div>
+            {% endif %}
+
+            {% if perms.catalog.can_unpublish_product %}
+            <div class="d-flex justify-content-end align-items-center mt-2">
+                <form action="{% url 'catalog:unpublish_product' product.pk %}" method="post">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-lg btn-block btn-outline-primary">Отменить публикацию</button>
+                </form>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

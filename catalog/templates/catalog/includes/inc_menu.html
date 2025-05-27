@@ -1,0 +1,29 @@
+<div class="d-flex flex-column flex-md-row align-items-center p-3 px-md-4 mb-3 bg-white border-bottom box-shadow">
+    <h5 class="my-0 mr-md-auto font-weight-normal">
+        <a href="{% url 'catalog:home' %}" style="text-decoration: none; color: inherit;">
+            <img src="/media/catalog/images/logo.jpg" alt="Luxora" style="max-width: 110px; height: auto;">
+        </a>
+
+    </h5>
+    <nav class="ms-5 me-auto">
+        <a class="p-2 btn btn-outline-primary me-2" href="/">Каталог</a>
+        <a class="p-2 btn btn-outline-primary me-2" href="{% url 'catalog:contacts' %}">Контакты</a>
+        <a class="p-2 btn btn-outline-primary me-2" href="{% url 'blog:base' %}">Блог</a>
+    </nav>
+        <div class="d-flex justify-content-end align-items-center">
+            <a class="link-primary" href="#" aria-label="Поиск">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="mx-3" role="img" viewBox="0 0 24 24">
+                    <title>Поиск</title>
+                    <circle cx="10.5" cy="10.5" r="7.5"/>
+                    <path d="M21 21l-5.2-5.2"/>
+                </svg>
+            </a>
+            {% if user.is_authenticated %}
+            <span class="me-2">{{ user.email }}</span>
+            <a class="p-2 btn btn-outline-primary me-2" href="{% url 'users:logout' %}">Выход</a>
+            {% else %}
+            <a class="p-2 btn btn-outline-primary me-2" href="{% url 'users:login' %}">Вход</a>
+            <a class="p-2 btn btn-outline-primary me-2" href="{% url 'users:register' %}">Регистрация</a>
+            {% endif %}
+        </div>
+</div>

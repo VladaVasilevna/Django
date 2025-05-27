@@ -1,0 +1,29 @@
+.bd-placeholder-img {
+        font-size: 1.125rem;
+        text-anchor: middle;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        user-select: none;
+      }
+
+      @media (min-width: 768px) {
+        .bd-placeholder-img-lg {
+          font-size: 3.5rem;
+        }
+      }
+
+.row.g-0 {
+    display: flex;
+}
+
+.text-block {
+    flex-grow: 1; /* Позволяет блоку с текстом занимать все доступное пространство */
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* Центрирование содержимого по вертикали */
+}
+
+.col-auto img {
+    max-height: 100%; /* Ограничивает высоту изображения */
+    object-fit: cover; /* Обеспечивает правильное отображение изображения */
+}
