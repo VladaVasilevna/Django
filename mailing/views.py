@@ -8,6 +8,9 @@ from django.core.mail import send_mail
 from django.utils import timezone
 from django.shortcuts import get_object_or_404
 from datetime import datetime
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.utils.decorators import method_decorator
+from django.views.decorators.cache import cache_page
 
 
 class ClientCreateView(View):
@@ -46,9 +49,15 @@ class ClientCancelView(View):
         return redirect('/mailing/clients/create/')
 
 
-class ClientListView(ListView):
+class ClientListView(LoginRequiredMixin, ListView):
     model = Client
-    queryset = Client.objects.all()
+    template_name = 'mailing/client_list.html'
+
+    def get_queryset(self):
+        user = self.request.user
+        if user.role == 'manager':
+            return Client.objects.all()
+        return Client.objects.filter(user=user)
 
 
 class ClientDeleteView(DeleteView):
@@ -137,11 +146,31 @@ class MailingCreateView(CreateView):
         form.save_m2m()
         return super().form_valid(form)
 
-class MailingListView(ListView):
+
+@method_decorator(cache_page(60 * 5), name='dispatch')  # кеш 5 минут
+class MailingListView(LoginRequiredMixin, ListView):
     model = Mailing
     template_name = 'mailing/mailing_list.html'
 
-class MailingUpdateView(UpdateView):
+    def get_queryset(self):
+        user = self.request.user
+        if user.role == 'manager':
+            return Mailing.objects.all()
+        return Mailing.objects.filter(user=user)
+
+
+class UserIsOwnerMixin(UserPassesTestMixin):
+    def test_func(self):
+        obj = self.get_object()
+        if hasattr(obj, 'user'):
+            return obj.user == self.request.user or self.request.user.role == 'manager'
+        if hasattr(obj, 'mailing'):
+            # Для Attempt и других связанных моделей
+            return obj.mailing.user == self.request.user or self.request.user.role == 'manager'
+        return False
+
+
+class MailingUpdateView(LoginRequiredMixin, UserIsOwnerMixin, UpdateView):
     model = Mailing
     form_class = MailingForm
     template_name = 'mailing/mailing_form.html'
@@ -196,11 +225,12 @@ def send_mailing_post(request, pk):
     return redirect('/mailing/mailings/')
 
 
-class StatisticsView(View):
+class StatisticsView(LoginRequiredMixin, View):
     def get(self, request):
-        successful_attempts = Attempt.objects.filter(status='success').count()
-        failed_attempts = Attempt.objects.filter(status='failed').count()
-        last_attempts = Attempt.objects.order_by('-attempt_datetime')[:10]
+        user_mailings = Mailing.objects.filter(user=request.user)
+        successful_attempts = Attempt.objects.filter(mailing__in=user_mailings, status='success').count()
+        failed_attempts = Attempt.objects.filter(mailing__in=user_mailings, status='failed').count()
+        last_attempts = Attempt.objects.filter(mailing__in=user_mailings).order_by('-attempt_datetime')[:10]
 
         context = {
             'successful_attempts': successful_attempts,
