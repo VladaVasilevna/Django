@@ -1,10 +1,10 @@
 import secrets
 
 from django.core.mail import send_mail
-from django.shortcuts import get_object_or_404, redirect
+from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse, reverse_lazy
 from django.views.generic import CreateView
-
+from django.contrib.auth.decorators import user_passes_test
 from config.settings import EMAIL_HOST_USER
 from users.forms import UserRegisterForm
 from users.models import User
@@ -37,3 +37,18 @@ def email_verification(request, token):
     user.is_active = True
     user.save()
     return redirect(reverse("users:login"))
+
+def manager_required(view_func):
+    return user_passes_test(lambda u: u.is_authenticated and u.role == 'manager')(view_func)
+
+@manager_required
+def user_list(request):
+    users = User.objects.all()
+    return render(request, 'users/user_list.html', {'users': users})
+
+@manager_required
+def block_user(request, pk):
+    user = get_object_or_404(User, pk=pk)
+    user.is_active = False
+    user.save()
+    return redirect('users:user_list')
