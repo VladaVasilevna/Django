@@ -6,7 +6,21 @@
             <div class="card">
                 <div class="card-body">
                     {% csrf_token %}
+
+                    {% if form.errors %}
+                        <div class="alert alert-danger">
+                            Пожалуйста, исправьте ошибки ниже.
+                        </div>
+                    {% endif %}
+
                     {{ form.as_p }}
+
+                    <div class="mb-3">
+                        <a href="{% url 'users:password_reset' %}">Забыли пароль?</a>
+                    </div>
+                    <div>
+                        Нет аккаунта? <a href="{% url 'users:register' %}">Зарегистрироваться</a>
+                    </div>
                 </div>
                 <button type="submit" class="btn btn-primary">
                     Войти

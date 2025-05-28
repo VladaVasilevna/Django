@@ -1,5 +1,6 @@
 from django.core.exceptions import ValidationError
 from django.db import models
+from django.conf import settings
 
 
 class Client(models.Model):
@@ -36,6 +37,7 @@ class Mailing(models.Model):
         ('yearly', '1 раз в год'),
     ]
 
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, verbose_name="Пользователь")
     message = models.ForeignKey(Message, on_delete=models.CASCADE, verbose_name="Сообщение")
     clients = models.ManyToManyField(Client, verbose_name="Получатели")
     repeat = models.CharField(max_length=20, choices=REPEAT_CHOICES, default='once', verbose_name="Периодичность")
