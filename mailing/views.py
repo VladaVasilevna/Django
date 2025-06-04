@@ -81,6 +81,16 @@ class MessageCreateView(View):
         editing_message = request.session.get('editing_message', None)
         return render(request, 'mailing/text_form.html', {'form': form, 'messages': messages, 'editing_message': editing_message})
 
+class MessageListView(LoginRequiredMixin, ListView):
+    model = Message
+    template_name = 'mailing/message_list.html'
+
+    def get_queryset(self):
+        user = self.request.user
+        if user.role == 'manager':
+            return Message.objects.all()
+        return Message.objects.filter(user=user)
+
 
 class MessageEditView(View):
     def get(self, request, pk):

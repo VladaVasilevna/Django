@@ -3,14 +3,14 @@ from django.urls import path, reverse_lazy
 from django.contrib.auth import views as auth_views
 
 from users.apps import UsersConfig
-from users.views import UserCreateView, email_verification
+from users.views import UserCreateView, email_verification, ProfileView, ProfileUpdateView
 from users import views
 
 app_name = UsersConfig.name
 
 urlpatterns = [
     path("login/", LoginView.as_view(template_name="login.html"), name="login"),
-    path("logout/", LogoutView.as_view(), name="logout"),
+    path("logout/", LogoutView.as_view(next_page='/'), name="logout"),
     path("register/", UserCreateView.as_view(), name="register"),
     path("email-confirm/<str:token>/", email_verification, name="email-confirm"),
 
@@ -45,6 +45,24 @@ urlpatterns = [
         name='password_reset_complete'
     ),
 
-    path('users/', views.user_list, name='user_list'),
-    path('users/<int:pk>/block/', views.block_user, name='block_user'),
+    path('manage/users/', views.user_list, name='user_list'),
+    path('manage/users/<int:pk>/block/', views.block_user, name='block_user'),
+
+    path('profile/', ProfileView.as_view(), name='profile'),
+    path('profile/edit/', ProfileUpdateView.as_view(), name='profile_edit'),
+    path(
+            'password_change/',
+            auth_views.PasswordChangeView.as_view(
+                template_name='users/password_change_form.html',
+                success_url=reverse_lazy('users:password_change_done'),
+            ),
+            name='password_change'
+        ),
+    path(
+        'password_change/done/',
+        auth_views.PasswordChangeDoneView.as_view(
+            template_name='users/password_change_done.html'
+        ),
+        name='password_change_done'
+    ),
 ]
