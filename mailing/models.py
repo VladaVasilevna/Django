@@ -4,6 +4,7 @@ from django.conf import settings
 
 
 class Client(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, verbose_name="Владелец", null=True, blank=True)
     email = models.EmailField(unique=True, verbose_name="Email")
     full_name = models.CharField(max_length=200, verbose_name="Ф. И. О.")
     comment = models.TextField(blank=True, null=True, verbose_name="Комментарий")
@@ -15,8 +16,14 @@ class Client(models.Model):
     class Meta:
         verbose_name = "Получатель"
         verbose_name_plural = "Получатели"
+        permissions = [
+            ("view_client_manager", "Can view all clients (manager)"),
+            ("change_client_manager", "Can change all clients (manager)"),
+            ("delete_client_manager", "Can delete all clients (manager)"),
+        ]
 
 class Message(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, verbose_name="Владелец", null=True, blank=True)
     topic_message = models.CharField(max_length=200, verbose_name="Тема сообщения")
     text_message = models.TextField(default="",verbose_name="Сообщение")
 
@@ -26,6 +33,11 @@ class Message(models.Model):
     class Meta:
         verbose_name = "Сообщение"
         verbose_name_plural = "Сообщения"
+        permissions = [
+            ("view_message_manager", "Can view all messages (manager)"),
+            ("change_message_manager", "Can change all messages (manager)"),
+            ("delete_message_manager", "Can delete all messages (manager)"),
+        ]
 
 
 class Mailing(models.Model):
@@ -61,6 +73,11 @@ class Mailing(models.Model):
     class Meta:
         verbose_name = "Рассылка"
         verbose_name_plural = "Рассылки"
+        permissions = [
+            ("view_mailing_manager", "Can view all mailings (manager)"),
+            ("change_mailing_manager", "Can change all mailings (manager)"),
+            ("delete_mailing_manager", "Can delete all mailings (manager)"),
+        ]
 
 
 class Attempt(models.Model):

@@ -70,7 +70,7 @@ class MessageCreateView(View):
         form = MessageForm()
         messages = Message.objects.all().order_by('id')
         editing_message = request.session.get('editing_message', None)
-        return render(request, 'mailing/text_form.html', {'form': form, 'messages': messages, 'editing_message': editing_message})
+        return render(request, 'mailing/message_list.html', {'form': form, 'messages': messages, 'editing_message': editing_message})
 
     def post(self, request):
         form = MessageForm(request.POST)
@@ -79,17 +79,32 @@ class MessageCreateView(View):
             return redirect(request.path)
         messages = Message.objects.all().order_by('id')
         editing_message = request.session.get('editing_message', None)
-        return render(request, 'mailing/text_form.html', {'form': form, 'messages': messages, 'editing_message': editing_message})
+        return render(request, 'mailing/message_list.html', {'form': form, 'messages': messages, 'editing_message': editing_message})
 
 class MessageListView(LoginRequiredMixin, ListView):
     model = Message
     template_name = 'mailing/message_list.html'
+    context_object_name = 'messages'
 
     def get_queryset(self):
         user = self.request.user
         if user.role == 'manager':
             return Message.objects.all()
-        return Message.objects.filter(user=user)
+        return Message.objects.filter(mailing__user=user).distinct()
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        # Получаем ID редактируемого сообщения из параметров запроса или сессии
+        editing_message = self.request.GET.get('edit')
+        if editing_message:
+            try:
+                editing_message = int(editing_message)
+            except ValueError:
+                editing_message = None
+        else:
+            editing_message = None
+        context['editing_message'] = editing_message
+        return context
 
 
 class MessageEditView(View):

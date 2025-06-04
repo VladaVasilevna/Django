@@ -4,7 +4,7 @@
 
     <div class="container">
         <div class="row justify-content-center">
-            <div class="col-md-5">
+            <div class="col-md-7">
                 <div class="card">
                     <h3 class="card-header text-center">Рассылки</h3>
                     <div class="card-body">
@@ -13,6 +13,7 @@
                         <p>Уникальных получателей: {{ clients_count }}</p>
                         <div class="text-center">
                             <a href="{% url 'mailing:client_create' %}" class="btn btn-primary me-2">Список получателей</a>
+                            <a href="{% url 'mailing:message_create' %}" class="btn btn-primary me-2">Список сообщений</a>
                             <a href="{% url 'mailing:mailing_list' %}" class="btn btn-primary me-2">Список рассылок</a>
                             <a href="{% url 'mailing:statistics' %}" class="btn btn-primary">Статистика</a>
                         </div>
