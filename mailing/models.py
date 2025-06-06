@@ -1,10 +1,12 @@
+from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.db import models
-from django.conf import settings
 
 
 class Client(models.Model):
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, verbose_name="Владелец", null=True, blank=True)
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, verbose_name="Владелец", null=True, blank=True
+    )
     email = models.EmailField(unique=True, verbose_name="Email")
     full_name = models.CharField(max_length=200, verbose_name="Ф. И. О.")
     comment = models.TextField(blank=True, null=True, verbose_name="Комментарий")
@@ -22,10 +24,13 @@ class Client(models.Model):
             ("delete_client_manager", "Can delete all clients (manager)"),
         ]
 
+
 class Message(models.Model):
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, verbose_name="Владелец", null=True, blank=True)
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, verbose_name="Владелец", null=True, blank=True
+    )
     topic_message = models.CharField(max_length=200, verbose_name="Тема сообщения")
-    text_message = models.TextField(default="",verbose_name="Сообщение")
+    text_message = models.TextField(default="", verbose_name="Сообщение")
 
     def __str__(self):
         return self.topic_message
@@ -42,30 +47,29 @@ class Message(models.Model):
 
 class Mailing(models.Model):
     REPEAT_CHOICES = [
-        ('once', 'Один раз'),
-        ('daily', 'Ежедневно'),
-        ('weekly', '1 раз в неделю'),
-        ('monthly', '1 раз в месяц'),
-        ('yearly', '1 раз в год'),
+        ("once", "Один раз"),
+        ("daily", "Ежедневно"),
+        ("weekly", "1 раз в неделю"),
+        ("monthly", "1 раз в месяц"),
+        ("yearly", "1 раз в год"),
     ]
 
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, verbose_name="Пользователь")
     message = models.ForeignKey(Message, on_delete=models.CASCADE, verbose_name="Сообщение")
     clients = models.ManyToManyField(Client, verbose_name="Получатели")
-    repeat = models.CharField(max_length=20, choices=REPEAT_CHOICES, default='once', verbose_name="Периодичность")
+    repeat = models.CharField(max_length=20, choices=REPEAT_CHOICES, default="once", verbose_name="Периодичность")
     start_datetime = models.DateTimeField(verbose_name="Дата и время первой отправки")
     end_datetime = models.DateTimeField(verbose_name="Дата окончания рассылки", blank=True, null=True)
     status = models.CharField(
         max_length=20,
-        choices=[('Создана', 'Создана'), ('Запущена', 'Запущена'), ('Завершена', 'Завершена')],
-        default='Создана',
-        verbose_name="Статус"
+        choices=[("Создана", "Создана"), ("Запущена", "Запущена"), ("Завершена", "Завершена")],
+        default="Создана",
+        verbose_name="Статус",
     )
 
     def clean(self):
-        if self.repeat != 'once' and self.end_datetime < self.start_datetime:
-            raise ValidationError('Дата окончания не может быть раньше даты первой отправки')
-
+        if self.repeat != "once" and self.end_datetime < self.start_datetime:
+            raise ValidationError("Дата окончания не может быть раньше даты первой отправки")
 
     def __str__(self):
         return f"{self.message.topic_message} ({self.status})"
@@ -82,8 +86,8 @@ class Mailing(models.Model):
 
 class Attempt(models.Model):
     STATUS_CHOICES = [
-        ('success', 'Успешно'),
-        ('failed', 'Не успешно'),
+        ("success", "Успешно"),
+        ("failed", "Не успешно"),
     ]
 
     mailing = models.ForeignKey(Mailing, on_delete=models.CASCADE, verbose_name="Рассылка")

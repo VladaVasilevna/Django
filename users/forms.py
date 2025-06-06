@@ -1,8 +1,8 @@
 from django import forms
-from django.forms import BooleanField, TextInput, ClearableFileInput, ModelForm
 from django.contrib.auth.forms import UserCreationForm
-from users.choices import COUNTRY_CHOICES
+from django.forms import BooleanField, ClearableFileInput, ModelForm, TextInput
 
+from users.choices import COUNTRY_CHOICES
 from users.models import User
 
 
@@ -24,16 +24,17 @@ class UserRegisterForm(StyleFormMixin, UserCreationForm):
 
 class UserProfileForm(StyleFormMixin, ModelForm):
     country = forms.ChoiceField(
-        choices=[('', '---------')] + COUNTRY_CHOICES,
+        choices=[("", "---------")] + COUNTRY_CHOICES,
         required=False,
-        label='Страна',
-        widget=forms.Select(attrs={'class': 'form-control'})
+        label="Страна",
+        widget=forms.Select(attrs={"class": "form-control"}),
     )
+
     class Meta:
         model = User
-        fields = ['full_name', 'phone_number', 'country', 'avatar']
+        fields = ["full_name", "phone_number", "country", "avatar"]
         widgets = {
-            'full_name': TextInput(attrs={'class': 'form-control', 'placeholder': 'Введите имя'}),
-            'phone_number': TextInput(attrs={'class': 'form-control', 'placeholder': 'Введите номер телефона'}),
-            'avatar': ClearableFileInput(attrs={'class': 'form-control'}),
+            "full_name": TextInput(attrs={"class": "form-control", "placeholder": "Введите имя"}),
+            "phone_number": TextInput(attrs={"class": "form-control", "placeholder": "Введите номер телефона"}),
+            "avatar": ClearableFileInput(attrs={"class": "form-control"}),
         }

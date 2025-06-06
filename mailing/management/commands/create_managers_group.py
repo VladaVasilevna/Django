@@ -1,13 +1,15 @@
-from django.core.management.base import BaseCommand
 from django.contrib.auth.models import Group, Permission
 from django.contrib.contenttypes.models import ContentType
-from mailing.models import Client, Message, Mailing
+from django.core.management.base import BaseCommand
+
+from mailing.models import Client, Mailing, Message
+
 
 class Command(BaseCommand):
-    help = 'Создает группу Менеджеры с нужными правами'
+    help = "Создает группу Менеджеры с нужными правами"
 
     def handle(self, *args, **kwargs):
-        group, created = Group.objects.get_or_create(name='manager')
+        group, created = Group.objects.get_or_create(name="manager")
 
         # Добавляем права на модели mailing
         models = [Client, Message, Mailing]
