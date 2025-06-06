@@ -1,3 +1,4 @@
+{% load static %}
 <div class="d-flex flex-column flex-md-row align-items-center p-3 px-md-4 mb-3 bg-white border-bottom box-shadow">
     <h5 class="my-0 mr-md-auto font-weight-normal">
         <a href="{% url 'catalog:home' %}" style="text-decoration: none; color: inherit;">
@@ -9,6 +10,7 @@
         <a class="p-2 btn btn-outline-primary me-2" href="/">Каталог</a>
         <a class="p-2 btn btn-outline-primary me-2" href="{% url 'catalog:contacts' %}">Контакты</a>
         <a class="p-2 btn btn-outline-primary me-2" href="{% url 'blog:base' %}">Блог</a>
+        <a class="p-2 btn btn-outline-primary me-2" href="{% url 'mailing:index' %}">Рассылки</a>
     </nav>
         <div class="d-flex justify-content-end align-items-center">
             <a class="link-primary" href="#" aria-label="Поиск">
@@ -19,7 +21,15 @@
                 </svg>
             </a>
             {% if user.is_authenticated %}
-            <span class="me-2">{{ user.email }}</span>
+            <a href="{% url 'users:profile' %}" class="d-flex align-items-center">
+                {% if user.avatar %}
+                    <img src="{{ user.avatar.url }}" alt="Аватар пользователя" class="rounded-circle" style="width: 35px; height: 35px; object-fit: cover;">
+                {% else %}
+                    <img src="{% static 'images/default_avatar.png' %}" alt="Аватар по умолчанию" class="rounded-circle" style="width: 35px; height: 35px; object-fit: cover;">
+                {% endif %}
+                <span class="ms-2 me-2">{{ user.email }}</span>
+            </a>
+
             <a class="p-2 btn btn-outline-primary me-2" href="{% url 'users:logout' %}">Выход</a>
             {% else %}
             <a class="p-2 btn btn-outline-primary me-2" href="{% url 'users:login' %}">Вход</a>
